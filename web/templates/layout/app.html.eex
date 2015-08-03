@@ -17,7 +17,9 @@
           Pinpointr
       </div>
 
-      <%= @inner %>
+      <div id="content">
+          <%= @inner %>
+      </div>
 
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
