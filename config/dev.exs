@@ -29,7 +29,7 @@ config :logger, :console, format: "[$level] $message\n"
 # Configure your database
 config :pinpointr, Pinpointr.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "janeristj",
+  username: "janerist",
   password: "",
   database: "pinpointr_dev",
   extensions: [{Geo.PostGIS.Extension, library: Geo}],
