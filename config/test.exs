@@ -12,7 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :pinpointr, Pinpointr.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "janerist",
+  password: "",
   database: "pinpointr_test",
+  extensions: [{Geo.PostGIS.Extension, library: Geo}],
   pool: Ecto.Adapters.SQL.Sandbox

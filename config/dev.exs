@@ -29,7 +29,8 @@ config :logger, :console, format: "[$level] $message\n"
 # Configure your database
 config :pinpointr, Pinpointr.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "janeristj",
+  password: "",
   database: "pinpointr_dev",
+  extensions: [{Geo.PostGIS.Extension, library: Geo}],
   size: 10 # The amount of database connections in the pool
