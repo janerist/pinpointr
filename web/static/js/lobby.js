@@ -1,4 +1,4 @@
-import {Socket} from "phoenix"
+import {Socket} from "phoenix";
 
 // let socket = new Socket("/ws")
 // socket.connect()
@@ -7,7 +7,7 @@ import {Socket} from "phoenix"
 //   console.log("Joined succesffuly!", resp)
 // })
 
-let App = {
-}
+let Lobby = {
+};
 
-export default App
+export default Lobby;
