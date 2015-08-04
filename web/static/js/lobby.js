@@ -11,8 +11,9 @@ let RoomNode = React.createClass({
     let url = "rooms/" + this.props.data.id;
     return (
       <li>
-        <a href={url}>
-          {this.props.data.name}
+        <a href={url} className="btn btn-primary btn-large">
+          <h4>{this.props.data.name}</h4>
+          <i className="glyphicon glyphicon-user"></i>
         </a>
       </li>
     );
@@ -39,9 +40,12 @@ let RoomList = React.createClass({
     });
 
     return (
-      <ul className="unstyled">
-        {roomNodes}
-      </ul>
+      <div className="jumbotron">
+        <h4>Join a room to play!</h4>
+        <ul className="list-unstyled">
+            {roomNodes}
+        </ul>
+      </div>
     );
   }
 });
