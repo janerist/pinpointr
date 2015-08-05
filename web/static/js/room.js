@@ -16,7 +16,9 @@ let Room = React.createClass({
       return;
     }
 
-    let chan = this.props.socket.chan("rooms:" + this.props.id, { name: name });
+    let room = "rooms:" + this.props.id;
+    let chan = this.props.socket.chan(room, { name: name });
+
     chan.join()
       .receive("ok", roomData => {
         this.setState({
