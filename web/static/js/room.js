@@ -1,5 +1,6 @@
 import {Socket} from "phoenix";
 import NameInputModal from "./NameInputModal";
+import Map from "./Map";
 
 let Room = React.createClass({
 
@@ -20,11 +21,11 @@ let Room = React.createClass({
     let chan = this.props.socket.chan(room, { name: name });
 
     chan.join()
-      .receive("ok", roomData => {
+      .receive("ok", response => {
         this.setState({
-          roomName: roomData.name,
-          users: roomData.users,
-          zxy: roomData.zxy
+          roomName: response.room.name,
+          users: response.room.users,
+          zxy: response.room.zxy
         });
         this.refs.nameModal.close();
       })
@@ -35,7 +36,10 @@ let Room = React.createClass({
 
   render() {
     return (
+      <div>
+      <Map zxy={this.state.zxy} />
       <NameInputModal ref="nameModal" nameSubmitted={this.join}/>
+        </div>
     );
   }
 
