@@ -16,7 +16,10 @@ let NameInputModal = React.createClass({
   },
 
   open() {
-    $(this.getDOMNode()).modal({keyboard: false});
+    $(this.getDOMNode()).modal({
+      backdrop: "static",
+      keyboard: false
+    });
     React.findDOMNode(this.refs.nameInput).focus();
   },
 
