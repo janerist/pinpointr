@@ -1,1 +1,2 @@
-Room id: <%= @room_id  %>
+<div id="room">
+</div>

@@ -1,17 +1,11 @@
 import {Socket} from "phoenix";
-// let socket = new Socket("/ws")
-// socket.connect()
-// let chan = socket.chan("topic:subtopic", {})
-// chan.join().receive("ok", resp => {
-//   console.log("Joined succesffuly!", resp)
-// })
 
 let RoomNode = React.createClass({
   render() {
     let url = "rooms/" + this.props.data.id;
     return (
       <li>
-        <a href={url} className="btn btn-primary btn-large">
+        <a href={url} className="btn btn-primary btn-large btn-block">
           <h4>{this.props.data.name}</h4>
           <i className="glyphicon glyphicon-user"></i>
         </a>

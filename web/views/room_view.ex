@@ -9,7 +9,8 @@ defmodule Pinpointr.RoomView do
 
   def render("scripts.room.html", assigns) do
     """
-    <script>require("web/static/js/room").init(#{assigns.room_id})</script>
+    <script>var _room_id = #{assigns.room_id};</script>
+    <script>require("web/static/js/room")</script>
     """
   end
 end
