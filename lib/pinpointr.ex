@@ -13,6 +13,7 @@ defmodule Pinpointr do
       worker(Pinpointr.Repo, []),
       # Here you could define other workers and supervisors as children
       # worker(Pinpointr.Worker, [arg1, arg2, arg3]),
+      worker(Pinpointr.UserStore, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
