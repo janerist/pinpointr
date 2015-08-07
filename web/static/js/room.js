@@ -39,7 +39,6 @@ let Room = React.createClass({
       <div className="container-fluid">
         <div className="row">
           <div className="col-lg-12">
-            <h4>{this.state.roomName}</h4>
           </div>
         </div>
         <div className="row">
@@ -47,6 +46,7 @@ let Room = React.createClass({
             <Map zxy={this.state.zxy} />
           </div>
           <div className="col-lg-3">
+            <h4>{this.state.roomName}</h4>
           </div>
         </div>
         <NameInputModal ref="nameModal" nameSubmitted={this.join}/>

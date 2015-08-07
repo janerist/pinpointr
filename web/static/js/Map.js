@@ -1,5 +1,11 @@
 let Map = React.createClass({
 
+  handleResize() {
+    let $mapDiv = $("#map");
+    let offset = $mapDiv.offset();
+    $mapDiv.height($(window).height() - offset.top);
+  },
+
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
@@ -18,17 +24,13 @@ let Map = React.createClass({
     window.removeEventListener("resize", this.handleResize);
   },
 
-  componentWillUpdate(nextProps) {
-    if (nextProps.zxy) {
-      let [z, x, y] = nextProps.zxy.split("/");
-      this.map.setView([x, y], z);
-    }
+  shouldComponentUpdate({zxy}) {
+    return this.props.zxy !== zxy;
   },
 
-  handleResize(event) {
-    let $mapDiv = $("#map");
-    let offset = $mapDiv.offset();
-    $mapDiv.height($(window).height() - offset.top);
+  componentWillUpdate({zxy}) {
+    let [z, x, y] = zxy.split("/");
+    this.map.setView([x, y], z);
   },
 
   render() {
