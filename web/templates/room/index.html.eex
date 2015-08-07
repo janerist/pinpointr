@@ -1,3 +1,5 @@
-<div id="lobby">
-    Loading rooms...
+<div class="container">
+    <div id="lobby">
+        Loading rooms...
+    </div>
 </div>

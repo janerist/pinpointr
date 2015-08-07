@@ -10,17 +10,16 @@ let Map = React.createClass({
     }).addTo(this.map);
   },
 
-  componentWillReceiveProps(nextProps) {
+  componentWillUpdate(nextProps) {
     if (nextProps.zxy) {
       let [z, x, y] = nextProps.zxy.split("/");
-      this.map.setZoom(z);
-      this.map.panTo([x, y]);
+      this.map.setView([x, y], z);
     }
   },
 
   render() {
     return (
-      <div id="map"></div>
+        <div style={{height: "400"}} id="map"></div>
     );
   }
 });

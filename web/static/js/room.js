@@ -36,10 +36,22 @@ let Room = React.createClass({
 
   render() {
     return (
-      <div>
-      <Map zxy={this.state.zxy} />
-      <NameInputModal ref="nameModal" nameSubmitted={this.join}/>
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-lg-12">
+            <h4>{this.state.roomName}</h4>
+          </div>
         </div>
+        <div className="row">
+          <div className="col-lg-9">
+            <Map zxy={this.state.zxy} />
+          </div>
+          <div className="col-lg-3">
+            <!-- scoreboard here -->
+          </div>
+        </div>
+        <NameInputModal ref="nameModal" nameSubmitted={this.join}/>
+      </div>
     );
   }
 
