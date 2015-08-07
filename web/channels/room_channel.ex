@@ -3,6 +3,7 @@ defmodule Pinpointr.RoomChannel do
 
   alias Pinpointr.Repo
   alias Pinpointr.Room
+  alias Pinpointr.User
   alias Pinpointr.UserStore
   alias Phoenix.Socket
 
@@ -15,7 +16,7 @@ defmodule Pinpointr.RoomChannel do
     if UserStore.name_taken?(room, name) do
       {:error, %{"reason" => "Name is taken. Please choose another one."}}
     else
-      UserStore.add_user(room, name)
+      UserStore.add_user(room, %User{name: name})
       db_room = (from r in Room, where: r.id == ^room_id) |> Repo.one
       {:ok, %{room: db_room |> room_transform}, assign(socket, :name, name)}
     end
