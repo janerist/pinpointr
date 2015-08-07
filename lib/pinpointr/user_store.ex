@@ -4,7 +4,6 @@ defmodule Pinpointr.UserStore do
   end
 
   def add_user(room, user) do
-    IO.puts "Adding #{user} to #{room}"
     Agent.update(__MODULE__, fn users ->
       if Dict.has_key?(users, room) do
         room_users = Dict.get(users, room)
@@ -16,7 +15,6 @@ defmodule Pinpointr.UserStore do
   end
 
   def remove_user(room, user) do
-    IO.puts "Removing #{user} from #{room}"
     Agent.update(__MODULE__, fn users ->
       room_users = Dict.get(users, room)
       Dict.put(users, room, Set.delete(room_users, user))
