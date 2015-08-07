@@ -27,3 +27,4 @@ erl_crash.dump
 
 .tern-port
 npm-debug.log
+.idea/
