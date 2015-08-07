@@ -7,7 +7,7 @@ let Scoreboard = React.createClass({
           <thead>
             <tr>
               <th>Name</th>
-              <th>Points</th>
+              <th className="text-right">Points</th>
             </tr>
           </thead>
           <tbody>
@@ -15,7 +15,7 @@ let Scoreboard = React.createClass({
             return (
               <tr>
                 <td>{user.name}</td>
-                <td>{user.points}</td>
+                <td className="text-right">{user.points}</td>
               </tr>
             );
           })}

@@ -65,4 +65,4 @@ socket.connect();
 React.render(
   <Room id={_room_id} socket={socket} />,
   document.getElementById("room")
-)
+);
