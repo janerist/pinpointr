@@ -15,7 +15,7 @@ let Map = React.createClass({
   },
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.handlResize);
+    window.removeEventListener("resize", this.handleResize);
   },
 
   componentWillUpdate(nextProps) {
