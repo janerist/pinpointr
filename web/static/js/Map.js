@@ -1,6 +1,9 @@
 let Map = React.createClass({
 
   componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+
     this.map = L.map("map", {
       doubleClickZoom: false
     }).setView([0, 0], 0);
@@ -8,6 +11,11 @@ let Map = React.createClass({
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
+
+  },
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handlResize);
   },
 
   componentWillUpdate(nextProps) {
@@ -17,9 +25,15 @@ let Map = React.createClass({
     }
   },
 
+  handleResize(event) {
+    let $mapDiv = $("#map");
+    let offset = $mapDiv.offset();
+    $mapDiv.height($(window).height() - offset.top);
+  },
+
   render() {
     return (
-        <div style={{height: "400"}} id="map"></div>
+        <div id="map" ref></div>
     );
   }
 });

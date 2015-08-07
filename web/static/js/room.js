@@ -47,7 +47,6 @@ let Room = React.createClass({
             <Map zxy={this.state.zxy} />
           </div>
           <div className="col-lg-3">
-            <!-- scoreboard here -->
           </div>
         </div>
         <NameInputModal ref="nameModal" nameSubmitted={this.join}/>
