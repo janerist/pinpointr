@@ -37,7 +37,10 @@ exports.config = {
   // Phoenix paths configuration
   paths: {
     // Which directories to watch
-    watched: ["web/static", "test/static"],
+    watched: ["deps/phoenix/web/static",
+              "deps/phoenix_html/web/static",
+              "web/static",
+              "test/static"],
 
     // Where to compile files to
     public: "priv/static"
@@ -47,7 +50,7 @@ exports.config = {
   plugins: {
     babel: {
       // Do not use ES6 compiler in vendor code
-      ignore: [/^(bower_components|web\/static\/vendor)/]
+      ignore: [/^(bower_components)/]
     }
   },
   npm: {

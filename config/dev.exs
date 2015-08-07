@@ -33,4 +33,4 @@ config :pinpointr, Pinpointr.Repo,
   password: "",
   database: "pinpointr_dev",
   extensions: [{Geo.PostGIS.Extension, library: Geo}],
-  size: 10 # The amount of database connections in the pool
+  pool_size: 10 # The amount of database connections in the pool

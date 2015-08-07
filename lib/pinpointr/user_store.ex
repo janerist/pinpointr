@@ -23,7 +23,7 @@ defmodule Pinpointr.UserStore do
 
   def get_users(room) do
     Agent.get(__MODULE__, fn users ->
-      Dict.get(users, room)
+      Dict.get(users, room) || HashSet.new
     end)
   end
 

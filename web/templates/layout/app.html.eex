@@ -23,6 +23,6 @@
       <%= @inner %>
 
       <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-      <%=raw(render_existing view_module(@conn), "scripts." <> controller_template(@conn), assigns) %>
+      <%=raw(render_existing view_module(@conn), "scripts." <> view_template(@conn), assigns) %>
   </body>
 </html>

@@ -1,4 +1,4 @@
-import {Socket} from "phoenix";
+import {Socket} from "deps/phoenix/web/static/js/phoenix";
 import NameInputModal from "./NameInputModal";
 import Map from "./Map";
 
@@ -18,7 +18,7 @@ let Room = React.createClass({
     }
 
     let room = "rooms:" + this.props.id;
-    let chan = this.props.socket.chan(room, { name: name });
+    let chan = this.props.socket.channel(room, { name: name });
 
     chan.join()
       .receive("ok", response => {

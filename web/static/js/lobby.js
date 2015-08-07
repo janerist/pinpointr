@@ -1,4 +1,4 @@
-import {Socket} from "phoenix";
+import {Socket} from "deps/phoenix/web/static/js/phoenix";
 
 let RoomNode = React.createClass({
   render() {
@@ -23,10 +23,11 @@ let RoomList = React.createClass({
   componentDidMount() {
     let socket = new Socket("/socket");
     socket.connect();
-    let chan = socket.chan("rooms:lobby", {});
-    chan.join().receive("ok", resp => {
-      this.setState(resp);
-    });
+    let chan = socket.channel("rooms:lobby");
+    chan.join()
+      .receive("ok", response => {
+        this.setState(response);
+      });
   },
 
   render() {
