@@ -1,6 +1,5 @@
 import {Socket} from "deps/phoenix/web/static/js/phoenix";
 
-
 let RoomPopover = React.createClass({
   render() {
     if (this.props.data.users.length) {
