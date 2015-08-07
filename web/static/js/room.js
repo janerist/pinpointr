@@ -1,6 +1,7 @@
 import {Socket} from "deps/phoenix/web/static/js/phoenix";
 import NameInputModal from "./NameInputModal";
 import Map from "./Map";
+import Scoreboard from "./Scoreboard";
 
 let Room = React.createClass({
 
@@ -38,7 +39,9 @@ let Room = React.createClass({
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-lg-12">
+          <div className="col-lg-9">
+          </div>
+          <div className="col-lg-3">
           </div>
         </div>
         <div className="row">
@@ -46,10 +49,10 @@ let Room = React.createClass({
             <Map zxy={this.state.zxy} />
           </div>
           <div className="col-lg-3">
-            <h4>{this.state.roomName}</h4>
+            <Scoreboard users={this.state.users} />
           </div>
         </div>
-        <NameInputModal ref="nameModal" nameSubmitted={this.join}/>
+        <NameInputModal ref="nameModal" nameSubmitted={this.join} />
       </div>
     );
   }
