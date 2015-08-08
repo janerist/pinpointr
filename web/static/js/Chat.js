@@ -1,26 +1,27 @@
 let ChatMessage = React.createClass({
   render() {
     let isAnnouncement = !this.props.message.from;
-    let className = isAnnouncement ? "chatAnnouncement" : "chatMessage";
-    return (
-        <li className={className}>
-        {isAnnouncement ? (
-          <span>{this.props.message.message}</span>
-        ) : (
-          <span>
+
+    if (isAnnouncement) {
+      return (
+        <li className="chatAnnouncement">{this.props.message.message}</li>
+      );
+    } else {
+      return (
+        <li className="chatMessage">
           <span className="chatFrom">{this.props.message.from}</span>:
           {this.props.message.message}
-          </span>
-        )}
         </li>
-    );
+      );
+    }
   }
 });
 
-
 let ChatInput = React.createClass({
   getInitialState() {
-    return { message: "" };
+    return { 
+      message: "" 
+    };
   },
 
   handleChange(event) {
@@ -40,25 +41,36 @@ let ChatInput = React.createClass({
 
   render() {
     return (
-        <input type="text"
-            className="form-control"
-            ref="chatInput"
-            value={this.state.message}
-            onChange={this.handleChange}
-            onKeyDown={this.handleKeyDown}
-            placeholder="Say something" />
+        <input 
+          type="text"
+          className="form-control"
+          ref="chatInput"
+          value={this.state.message}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
+          placeholder="Say something" />
     );
   }
 });
 
 let Chat = React.createClass({
+  componentDidMount() {
+    this.MAX_MESSAGES = 100;
+  },
+
   getInitialState() {
-    return { messages: [] };
+    return { 
+      messages: [] 
+    };
   },
 
   addMessage(message) {
+    var messages = this.state.messages;
+    if (messages.length === this.MAX_MESSAGES) {
+      messages = messages.splice(1, messages.length);
+    }
     this.setState({
-      messages: this.state.messages.concat(message)
+      messages: messages.concat(message)
     });
 
     let chatScroll = React.findDOMNode(this.refs.chatScroll);
@@ -71,14 +83,14 @@ let Chat = React.createClass({
         <div className="panel-body">
           <div className="chatScroll" ref="chatScroll">
             <ul className="list-unstyled">
-                {this.state.messages.map(m => {
+              {this.state.messages.map(m => {
                 return <ChatMessage message={m} />;
-                })}
+              })}
             </ul>
           </div>
         </div>
         <div className="panel-footer">
-          <ChatInput messageSubmitted={this.props.messageSubmitted}/>
+          <ChatInput messageSubmitted={this.props.messageSubmitted} />
         </div>
       </div>
     );

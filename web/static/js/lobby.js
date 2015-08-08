@@ -2,10 +2,10 @@ import {Socket} from "deps/phoenix/web/static/js/phoenix";
 
 let RoomPopover = React.createClass({
   render() {
-    if (this.props.data.users.length) {
+    if (this.props.users.length) {
       return (
         <ul className="list-unstyled">
-          {this.props.data.users.map(user => {
+          {this.props.users.map(user => {
             return (
               <li key={user.name}>
                 <i className="glyphicon glyphicon-user"></i> {user.name}
@@ -34,22 +34,22 @@ let RoomNode = React.createClass({
     el.popover("destroy");
     el.popover({
       html: true,
-      content: React.renderToString(<RoomPopover data={this.props.data}/>),
+      content: React.renderToString(<RoomPopover {...this.props} />),
       placement: "bottom",
       trigger: "hover"
     });
   },
 
   render() {
-    let url = "rooms/" + this.props.data.id;
+    let url = "rooms/" + this.props.id;
     return (
       <li>
         <a href={url}
            className="btn btn-primary btn-lg"
            ref="roomButton">
-          <h4>{this.props.data.name}</h4>
+          <h4>{this.props.name}</h4>
           <i className="glyphicon glyphicon-user"></i>
-        &nbsp;{this.props.data.users.length}
+        &nbsp;{this.props.users.length}
         </a>
       </li>
     );
@@ -58,29 +58,32 @@ let RoomNode = React.createClass({
 
 let RoomList = React.createClass({
   getInitialState() {
-    return { rooms: []};
+    return { 
+      rooms: []
+    };
   },
 
   componentDidMount() {
     let socket = new Socket("/socket");
     socket.connect();
-    let chan = socket.channel("rooms:lobby");
-    chan.join()
+    let channel = socket.channel("rooms:lobby");
+    channel.join()
       .receive("ok", response => {
         this.setState(response);
       });
   },
 
   render() {
-    let roomNodes = this.state.rooms.map(room => {
-      return (<RoomNode key={room.id} data={room} />);
-    });
 
     return (
       <div className="jumbotron text-center">
         <h4>Join a room to play!</h4>
         <ul className="list-unstyled">
-            {roomNodes}
+          {this.state.rooms.map(room => {
+            return (
+              <RoomNode key={room.id} {...room} />
+            );
+          })}
         </ul>
       </div>
     );

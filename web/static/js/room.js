@@ -5,16 +5,17 @@ import Scoreboard from "./Scoreboard";
 import Chat from "./Chat";
 
 let Room = React.createClass({
-
   getInitialState() {
-    return { users: [] };
+    return { 
+      users: [] 
+    };
   },
 
   componentDidMount() {
     this.refs.nameModal.open();
   },
 
-  join: function(name) {
+  join(name) {
     if (!name) {
       return;
     }
@@ -30,6 +31,7 @@ let Room = React.createClass({
         this.socket = socket;
         this.channel = channel;
         this.setState(payload);
+
         channel.on("user:joined", this.userJoined);
         channel.on("user:left", this.userLeft);
         channel.on("chat:message", this.refs.chat.addMessage);
@@ -90,7 +92,6 @@ let Room = React.createClass({
       </div>
     );
   }
-
 });
 
 React.render(

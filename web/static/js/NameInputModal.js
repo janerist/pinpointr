@@ -1,8 +1,8 @@
-
 let NameInputModal = React.createClass({
-
   getInitialState() {
-    return { name: "" };
+    return { 
+      name: "" 
+    };
   },
 
   handleChange(event) {
@@ -29,30 +29,31 @@ let NameInputModal = React.createClass({
 
   render() {
     return (
-        <div className="modal fade" tabIndex="-1" role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-body">
-                <label>Enter your name to join the room.</label>
-                <input type="text"
-                       className="form-control"
-                       ref="nameInput"
-                       onKeyUp={this.handleKeyUp}
-                       onChange={this.handleChange} />
-              </div>
-              <div className="modal-footer">
-                <button type="button"
-                        className="btn btn-primary"
-                        onClick={this.props.nameSubmitted.bind(null, this.state.name)}>
-                  Join room
-                </button>
-              </div>
+      <div className="modal fade" tabIndex="-1" role="dialog">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-body">
+              <label>Enter your name to join the room.</label>
+              <input 
+                type="text"
+                className="form-control"
+                ref="nameInput"
+                onKeyUp={this.handleKeyUp}
+                onChange={this.handleChange} />
+            </div>
+            <div className="modal-footer">
+              <button 
+                type="button"
+                className="btn btn-primary"
+                onClick={this.props.nameSubmitted.bind(null, this.state.name)}>
+                Join room
+              </button>
             </div>
           </div>
         </div>
+      </div>
     );
   }
-
 });
 
 export default NameInputModal;

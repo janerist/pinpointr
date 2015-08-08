@@ -1,5 +1,4 @@
 let Map = React.createClass({
-
   handleResize() {
     let $mapDiv = $("#map");
     let offset = $mapDiv.offset();
@@ -26,9 +25,9 @@ let Map = React.createClass({
 
   render() {
     return (
-        <div id="map"></div>
+      <div id="map"></div>
     );
   }
 });
 
-export default Map;
+export default Map; 
