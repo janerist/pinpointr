@@ -19,9 +19,10 @@ defmodule Pinpointr.UserStore do
   end
 
   def remove_user(room, name) do
-    Agent.update(__MODULE__, fn users ->
+    Agent.get_and_update(__MODULE__, fn users ->
       room_users = Dict.get(users, room)
-      Dict.put(users, room, Dict.delete(room_users, name))
+      user = Dict.get(room_users, name) 
+      {user, Dict.put(users, room, Dict.delete(room_users, name))}
     end)
   end
 
