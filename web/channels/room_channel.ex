@@ -36,6 +36,11 @@ defmodule Pinpointr.RoomChannel do
     broadcast! socket, "user:left", %{user: user}
   end
 
+  def handle_in("chat:message", %{"message" => message}, socket) do
+    broadcast! socket, "chat:message", %{from: socket.assigns[:name], message: message}
+    {:noreply, socket}
+  end
+
   defp room_transform(room) do
     %{id: room.id,
        name: room.name,

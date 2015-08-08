@@ -1,0 +1,12 @@
+.chatAnnouncement {
+    font-weight: bold;
+}
+
+.chatFrom {
+    font-weight: bold;
+}
+
+.chatScroll {
+    height: 190px;
+    overflow-y: auto;
+}
