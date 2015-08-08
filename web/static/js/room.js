@@ -6,7 +6,7 @@ import Scoreboard from "./Scoreboard";
 let Room = React.createClass({
 
   getInitialState() {
-    return { roomName: "", users: [], zxy: ""};
+    return { users: [] };
   },
 
   componentDidMount() {
@@ -22,14 +22,10 @@ let Room = React.createClass({
     let chan = this.props.socket.channel(room, { name: name });
 
     chan.join()
-      .receive("ok", response => {
+      .receive("ok", payload => {
         this.refs.nameModal.close();
-        this.setState({
-          roomName: response.room.name,
-          zxy: response.room.zxy,
-          users: response.room.users
-        });
 
+        this.setState(payload);
         chan.on("user:joined", this.userJoined);
         chan.on("user:left", this.userLeft);
       })
@@ -40,17 +36,13 @@ let Room = React.createClass({
 
   userJoined({user}) {
     this.setState({
-      roomName: this.state.roomName,
-      users: this.state.users.filter(u => u.name !== user.name).concat(user),
-      zxy: this.state.zxy
+      users: this.state.users.filter(u => u.name !== user.name).concat(user)
     });
   },
 
   userLeft({user}) {
     this.setState({
-      roomName: this.state.roomName,
-      users: this.state.users.filter(u => u.name !== user.name),
-      zxy: this.state.zxy
+      users: this.state.users.filter(u => u.name !== user.name)
     });
   },
 
@@ -65,7 +57,7 @@ let Room = React.createClass({
         </div>
         <div className="row">
           <div className="col-lg-9">
-            <Map zxy={this.state.zxy} />
+            <Map zxy={this.props.zxy} />
           </div>
           <div className="col-lg-3">
             <Scoreboard users={this.state.users} />
@@ -82,6 +74,6 @@ let socket = new Socket("/socket");
 socket.connect();
 
 React.render(
-  <Room id={_room_id} socket={socket} />,
+  <Room {...window.__room} socket={socket} />,
   document.getElementById("room")
 );

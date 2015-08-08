@@ -10,9 +10,10 @@ let Map = React.createClass({
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
 
+    let [z, x, y] = this.props.zxy.split("/");
     this.map = L.map("map", {
       doubleClickZoom: false
-    }).setView([0, 0], 0);
+    }).setView([x, y], z);
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -21,15 +22,6 @@ let Map = React.createClass({
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
-  },
-
-  shouldComponentUpdate({zxy}) {
-    return this.props.zxy !== zxy;
-  },
-
-  componentWillUpdate({zxy}) {
-    let [z, x, y] = zxy.split("/");
-    this.map.setView([x, y], z);
   },
 
   render() {

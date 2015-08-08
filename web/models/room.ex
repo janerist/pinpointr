@@ -22,3 +22,11 @@ defmodule Pinpointr.Room do
     |> cast(params, @required_fields, @optional_fields)
   end
 end
+
+defimpl Poison.Encoder, for: Pinpointr.Room do
+  def encode(room, options) do
+    Poison.Encoder.Map.encode(%{id: room.id,
+                                name: room.name,
+                                zxy: room.zxy}, options)
+  end
+end

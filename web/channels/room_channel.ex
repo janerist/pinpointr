@@ -12,18 +12,14 @@ defmodule Pinpointr.RoomChannel do
     {:ok, %{rooms: rooms}, socket}
   end
 
-  def join(room = "rooms:" <> room_id, %{"name" => name}, socket) do
+  def join("rooms:" <> _room_id = room, %{"name" => name}, socket) do
     if UserStore.name_taken?(room, name) do
       {:error, %{"reason" => "Name is taken. Please choose another one."}}
     else
       user = %User{name: name}
       UserStore.add_user(room, user)
-      r = (from r in Room, where: r.id == ^room_id)
-        |> Repo.one
-        |> room_transform
-
       send(self, {:after_join, user})
-      {:ok, %{room: r}, assign(socket, :name, name)}
+      {:ok, %{users: UserStore.get_users(room)}, assign(socket, :name, name)}
     end
   end
 
@@ -35,7 +31,7 @@ defmodule Pinpointr.RoomChannel do
   def terminate(_reason, %Socket{topic: "rooms:lobby"}) do
    # Do nothing when leaving the lobby
   end
-  def terminate(_reason, socket = %Socket{assigns: assigns, topic: room}) do
+  def terminate(_reason, %Socket{assigns: assigns, topic: room} = socket) do
     user = UserStore.remove_user(room, assigns[:name])
     broadcast! socket, "user:left", %{user: user}
   end
