@@ -22,22 +22,19 @@ let RoomPopover = React.createClass({
 
 let RoomNode = React.createClass({
   componentDidMount() {
-    this.clearAndSetPopover();
-  },
-
-  componentWillUpdate() {
-    this.clearAndSetPopover();
-  },
-
-  clearAndSetPopover() {
     let el = $(React.findDOMNode(this.refs.roomButton));
-    el.popover("destroy");
     el.popover({
       html: true,
       content: React.renderToString(<RoomPopover {...this.props} />),
       placement: "bottom",
       trigger: "hover"
     });
+  },
+
+  componentDidUpdate() {
+    let el = $(React.findDOMNode(this.refs.roomButton));
+    $(el).data("bs.popover").options.content =
+      React.renderToString(<RoomPopover {...this.props} />);
   },
 
   render() {
@@ -71,6 +68,10 @@ let RoomList = React.createClass({
       .receive("ok", response => {
         this.setState(response);
       });
+
+    channel.on("room:updated", payload => {
+      this.setState(payload);
+    });
   },
 
   render() {

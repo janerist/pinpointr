@@ -6,10 +6,10 @@ defmodule Pinpointr.RoomChannel do
   alias Pinpointr.User
   alias Pinpointr.UserStore
   alias Phoenix.Socket
+  alias Pinpointr.Endpoint
 
   def join("rooms:lobby", _auth_msg, socket) do
-    rooms = Repo.all(Room) |> Enum.map(&room_transform/1)
-    {:ok, %{rooms: rooms}, socket}
+    {:ok, %{rooms: get_room_list}, socket}
   end
 
   def join("rooms:" <> _room_id = room, %{"name" => name}, socket) do
@@ -25,6 +25,7 @@ defmodule Pinpointr.RoomChannel do
 
   def handle_info({:after_join, user}, socket) do
     broadcast! socket, "user:joined", %{user: user}
+    broadcast_room_updated_to_lobby
     {:noreply, socket}
   end
 
@@ -34,11 +35,20 @@ defmodule Pinpointr.RoomChannel do
   def terminate(_reason, %Socket{assigns: assigns, topic: room} = socket) do
     user = UserStore.remove_user(room, assigns[:name])
     broadcast! socket, "user:left", %{user: user}
+    broadcast_room_updated_to_lobby
   end
 
   def handle_in("chat:message", %{"message" => message}, socket) do
     broadcast! socket, "chat:message", %{from: socket.assigns[:name], message: message}
     {:noreply, socket}
+  end
+
+  defp broadcast_room_updated_to_lobby do
+    Endpoint.broadcast_from! self(), "rooms:lobby", "room:updated", %{rooms: get_room_list}
+  end
+
+  defp get_room_list do
+    Repo.all(Room) |> Enum.map(&room_transform/1)
   end
 
   defp room_transform(room) do
