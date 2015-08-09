@@ -39,22 +39,25 @@ defmodule Pinpointr.RoomChannel do
   end
 
   def handle_in("chat:message", %{"message" => message}, socket) do
-    broadcast! socket, "chat:message", %{from: socket.assigns[:name], message: message}
+    broadcast!(socket, "chat:message", 
+               %{from: socket.assigns[:name], 
+               message: message})
     {:noreply, socket}
   end
 
   defp broadcast_room_updated_to_lobby do
-    Endpoint.broadcast_from! self(), "rooms:lobby", "room:updated", %{rooms: get_room_list}
+    Endpoint.broadcast_from!(self(), 
+                             "rooms:lobby", 
+                             "room:updated", 
+                             %{rooms: get_room_list})
   end
 
   defp get_room_list do
-    Repo.all(Room) |> Enum.map(&room_transform/1)
-  end
-
-  defp room_transform(room) do
-    %{id: room.id,
-       name: room.name,
-       zxy: room.zxy,
-       users: UserStore.get_users("rooms:" <> Integer.to_string room.id)}
+    Repo.all(Room) |> Enum.map fn room -> 
+      %{ id: room.id,
+         name: room.name,
+         zxy: room.zxy,
+         users: UserStore.get_users "rooms:" <> Integer.to_string room.id
+      } end
   end
 end
