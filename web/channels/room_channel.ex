@@ -57,7 +57,7 @@ defmodule Pinpointr.RoomChannel do
       %{ id: room.id,
          name: room.name,
          zxy: room.zxy,
-         users: UserStore.get_users "rooms:" <> Integer.to_string room.id
+         users: UserStore.get_users "rooms:" <> to_string room.id
       } end
   end
 end
