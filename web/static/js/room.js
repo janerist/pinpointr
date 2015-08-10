@@ -7,7 +7,7 @@ import Chat from "./Chat";
 let Room = React.createClass({
   getInitialState() {
     return { 
-      users: [] 
+      players: [] 
     };
   },
 
@@ -32,8 +32,8 @@ let Room = React.createClass({
         this.channel = channel;
         this.setState(payload);
 
-        channel.on("user:joined", this.userJoined);
-        channel.on("user:left", this.userLeft);
+        channel.on("player:joined", this.playerJoined);
+        channel.on("player:left", this.playerLeft);
         channel.on("chat:message", this.refs.chat.addMessage);
       })
       .receive("error", response => {
@@ -42,23 +42,23 @@ let Room = React.createClass({
       });
   },
 
-  userJoined({user}) {
+  playerJoined({player}) {
     this.setState({
-      users: this.state.users.filter(u => u.name !== user.name).concat(user)
+      players: this.state.players.filter(p => p.name !== player.name).concat(player)
     });
 
     this.refs.chat.addMessage({
-      message: `${user.name} has joined the room.`
+      message: `${player.name} has joined the room.`
     });
   },
 
-  userLeft({user}) {
+  playerLeft({player}) {
     this.setState({
-      users: this.state.users.filter(u => u.name !== user.name)
+      players: this.state.players.filter(p => p.name !== player.name)
     });
 
     this.refs.chat.addMessage({
-      message: `${user.name} has left the room.`
+      message: `${player.name} has left the room.`
     });
   },
 
@@ -84,7 +84,7 @@ let Room = React.createClass({
             <Map zxy={this.props.zxy} />
           </div>
           <div className="col-lg-3">
-            <Scoreboard users={this.state.users} />
+            <Scoreboard players={this.state.players} />
             <Chat ref="chat" messageSubmitted={this.handleMessageSubmitted} />
           </div>
         </div>

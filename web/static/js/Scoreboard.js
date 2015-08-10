@@ -11,11 +11,11 @@ let Scoreboard = React.createClass({
             </tr>
           </thead>
           <tbody>
-          {this.props.users.map(user => {
+          {this.props.players.map(player => {
             return (
-              <tr key={user.name}>
-                <td>{user.name}</td>
-                <td className="text-right">{user.points}</td>
+              <tr key={player.name}>
+                <td>{player.name}</td>
+                <td className="text-right">{player.points}</td>
               </tr>
             );
           })}

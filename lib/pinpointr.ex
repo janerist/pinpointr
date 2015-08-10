@@ -10,16 +10,26 @@ defmodule Pinpointr do
       # Start the endpoint when the application starts
       supervisor(Pinpointr.Endpoint, []),
       # Start the Ecto repository
-      worker(Pinpointr.Repo, []),
+      worker(Pinpointr.Repo, [])
       # Here you could define other workers and supervisors as children
       # worker(Pinpointr.Worker, [arg1, arg2, arg3]),
-      worker(Pinpointr.UserStore, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Pinpointr.Supervisor]
-    Supervisor.start_link(children, opts)
+    {:ok, supervisor} = Supervisor.start_link(children, opts)
+
+    # Pull rooms out of the database. We have use start_child
+    # since we have to wait for the Repo to start.
+    # Each room starts a child worker "Pinpointr.RoomState"
+    Enum.map Pinpointr.Repo.all(Pinpointr.Room), fn room ->
+      worker_name = String.to_atom("room_" <> to_string room.id)
+      Supervisor.start_child(supervisor, 
+                             worker(Pinpointr.RoomState, [worker_name]))
+    end
+
+    {:ok, supervisor}
   end
 
   # Tell Phoenix to update the endpoint configuration
