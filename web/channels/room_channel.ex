@@ -13,7 +13,7 @@ defmodule Pinpointr.RoomChannel do
   end
 
   def join("rooms:" <> _room_id = room, %{"name" => name}, socket) do
-    if UserStore.name_taken?(room, name) do
+    if UserStore.get_user(room, name) do
       {:error, %{"reason" => "Name is taken. Please choose another one."}}
     else
       user = %User{name: name}

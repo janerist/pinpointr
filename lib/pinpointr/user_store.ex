@@ -9,11 +9,11 @@ defmodule Pinpointr.UserStore do
 
   def add_user(room, user) do
     Agent.update(__MODULE__, fn users ->
-      if Dict.has_key?(users, room) do
-        room_users = Dict.get(users, room)
-        Dict.put(users, room, Dict.put_new(room_users, user.name, user))
-      else
-        Dict.put_new(users, room, Dict.put(HashDict.new, user.name, user))
+      case Dict.get(users, room) do
+        nil -> 
+          Dict.put_new(users, room, Dict.put(HashDict.new, user.name, user))
+        room_users -> 
+          Dict.put(users, room, Dict.put_new(room_users, user.name, user))
       end
     end)
   end
@@ -26,20 +26,20 @@ defmodule Pinpointr.UserStore do
     end)
   end
 
+  def get_user(room, name) do
+    Agent.get(__MODULE__, fn users -> 
+      case Dict.get(users, room) do
+        nil -> nil
+        room_users -> Dict.get(room_users, name)
+      end
+    end)
+  end
+
   def get_users(room) do
     Agent.get(__MODULE__, fn users ->
       case Dict.get(users, room) do
         nil -> []
         room_users -> Dict.values(room_users)
-      end
-    end)
-  end
-
-  def name_taken?(room, name) do
-    Agent.get(__MODULE__, fn users ->
-      case Dict.get(users, room) do
-        nil -> false
-        room_users -> Dict.has_key?(room_users, name)
       end
     end)
   end
