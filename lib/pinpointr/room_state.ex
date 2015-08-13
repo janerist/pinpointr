@@ -1,11 +1,11 @@
 defmodule Pinpointr.RoomState do
   alias Pinpointr.Player
 
-  def start_link(room_name) do
+  def start_link(room_id) do
     Agent.start_link(fn -> %{
       players: HashDict.new, 
       game_state: :pre_game
-    } end, name: room_name)
+    } end, name: room(room_id))
   end
 
   def add_player(room_id, name) do

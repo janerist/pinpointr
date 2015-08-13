@@ -24,9 +24,8 @@ defmodule Pinpointr do
     # since we have to wait for the Repo to start.
     # Each room starts a child worker "Pinpointr.RoomState"
     Enum.map Pinpointr.Repo.all(Pinpointr.Room), fn room ->
-      worker_name = String.to_atom("room_" <> to_string room.id)
       Supervisor.start_child(supervisor, 
-                             worker(Pinpointr.RoomState, [worker_name]))
+                             worker(Pinpointr.RoomState, [room.id]))
     end
 
     {:ok, supervisor}
