@@ -17,23 +17,23 @@ defmodule Pinpointr.RoomChannel do
     else
       player = RoomState.add_player(room_id, name)
       send(self, {:after_join, player})
-      {:ok, %{players: RoomState.get_players(room_id)}, assign(socket, :name, name)}
+      {:ok, RoomState.get_state(room_id), assign(socket, :name, name)}
     end
   end
 
-  def handle_info({:after_join, player}, socket) do
+  def handle_info({:after_join, player}, socket = %Socket{topic: "rooms:" <> room_id}) do
     broadcast! socket, "player:joined", %{player: player}
-    broadcast_room_updated_to_lobby
+    broadcast_room_updated_to_lobby room_id
     {:noreply, socket}
   end
 
   def terminate(_reason, %Socket{topic: "rooms:lobby"}) do
    # Do nothing when leaving the lobby
   end
-  def terminate(_reason, %Socket{assigns: assigns, topic: "rooms:" <> room_id} = socket) do
+  def terminate(_reason, socket = %Socket{assigns: assigns, topic: "rooms:" <> room_id}) do
     player = RoomState.remove_player(room_id, assigns[:name])
     broadcast! socket, "player:left", %{player: player}
-    broadcast_room_updated_to_lobby
+    broadcast_room_updated_to_lobby room_id
   end
 
   def handle_in("chat:message", %{"message" => message}, socket) do
@@ -43,19 +43,24 @@ defmodule Pinpointr.RoomChannel do
     {:noreply, socket}
   end
 
-  defp broadcast_room_updated_to_lobby do
+  defp broadcast_room_updated_to_lobby(room_id) do
     Endpoint.broadcast_from!(self(), 
                              "rooms:lobby", 
                              "room:updated", 
-                             %{rooms: get_room_list})
+                             %{room: get_room(room_id)})
   end
 
   defp get_room_list do
-    Repo.all(Room) |> Enum.map fn room -> 
-      %{ id: room.id,
-         name: room.name,
-         zxy: room.zxy,
-         players: RoomState.get_players room.id
-      } end
+    Repo.all(Room) |> Enum.map &to_client_room/1
+  end
+
+  defp get_room(room_id) do
+    room = from(r in Room, where: r.id == ^room_id)
+     |> Repo.one
+     |> to_client_room
+  end
+
+  defp to_client_room(room) do
+    %{id: room.id, name: room.name, state: RoomState.get_state(room.id)} 
   end
 end

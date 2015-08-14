@@ -8,6 +8,12 @@ defmodule Pinpointr.RoomState do
     } end, name: room(room_id))
   end
 
+  def get_state(room_id) do
+    Agent.get(room(room_id), fn state -> 
+      %{state | players: Dict.values(state.players)}
+    end)
+  end
+
   def add_player(room_id, name) do
     Agent.get_and_update(room(room_id), fn state ->
       player = %Player{name: name}

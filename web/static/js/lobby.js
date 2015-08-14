@@ -2,10 +2,10 @@ import {Socket} from "deps/phoenix/web/static/js/phoenix";
 
 let RoomPopover = React.createClass({
   render() {
-    if (this.props.players.length) {
+    if (this.props.state.players.length) {
       return (
         <ul className="list-unstyled">
-          {this.props.players.map(player => {
+          {this.props.state.players.map(player => {
             return (
               <li key={player.name}>
                 <i className="glyphicon glyphicon-user"></i> {player.name}
@@ -46,7 +46,7 @@ let RoomNode = React.createClass({
            ref="roomButton">
           <h4>{this.props.name}</h4>
           <i className="glyphicon glyphicon-user"></i>
-        &nbsp;{this.props.players.length}
+        &nbsp;{this.props.state.players.length}
         </a>
       </li>
     );
@@ -70,7 +70,11 @@ let RoomList = React.createClass({
       });
 
     channel.on("room:updated", payload => {
-      this.setState(payload);
+      this.setState({
+        rooms: this.state.rooms
+        .filter(r => r.id !== payload.room.id)
+        .concat(payload.room)
+      });
     });
   },
 

@@ -25,12 +25,12 @@ let Room = React.createClass({
     let channel = socket.channel("rooms:" + this.props.id, {name: name});
 
     channel.join()
-      .receive("ok", payload => {
+      .receive("ok", roomState => {
         this.refs.nameModal.close();
 
         this.socket = socket;
         this.channel = channel;
-        this.setState(payload);
+        this.setState(roomState);
 
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
