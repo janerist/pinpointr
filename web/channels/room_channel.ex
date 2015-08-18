@@ -17,7 +17,7 @@ defmodule Pinpointr.RoomChannel do
     else
       player = RoomState.add_player(room_id, name)
       send(self, {:after_join, player})
-      {:ok, RoomState.get_state(room_id), assign(socket, :name, name)}
+      {:ok, get_room_state(room_id), assign(socket, :name, name)}
     end
   end
 
@@ -55,12 +55,17 @@ defmodule Pinpointr.RoomChannel do
   end
 
   defp get_room(room_id) do
-    room = from(r in Room, where: r.id == ^room_id)
+    from(r in Room, where: r.id == ^room_id)
      |> Repo.one
      |> to_client_room
   end
 
   defp to_client_room(room) do
-    %{id: room.id, name: room.name, state: RoomState.get_state(room.id)} 
+    %{id: room.id, name: room.name, state: get_room_state(room.id)} 
+  end
+
+  defp get_room_state(room_id) do
+    state = RoomState.get_state(room_id)
+    %{state | players: Dict.values(state.players)}
   end
 end
