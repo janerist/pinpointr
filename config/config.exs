@@ -10,7 +10,7 @@ config :pinpointr, Pinpointr.Endpoint,
   url: [host: "localhost"],
   root: Path.dirname(__DIR__),
   secret_key_base: "MYtSx8fjuf2l06abcSCpsB+WCL/YbXSChMOvTvSJDYgPluGWBlgxkGBWVQtwpPAv",
-  render_errors: [default_format: "html"],
+  render_errors: [accepts: ["html"]],
   pubsub: [name: Pinpointr.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
