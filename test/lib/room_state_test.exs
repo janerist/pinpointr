@@ -22,12 +22,12 @@ defmodule Pinpointr.RoomStateTest do
     assert Dict.get(players, "player1") == %Player{name: "player1"}
   end
 
-  test "add_player/2 changes game_state to :game_countdown" do
+  test "add_player/2 changes game_state to :round_starting" do
     RoomState.start_link(1)
 
     RoomState.add_player(1, "player1")
 
-    assert RoomState.get_state(1).game_state == :game_countdown
+    assert RoomState.get_state(1).game_state == :round_starting
   end
 
   test "remove_player/2 removes a player" do
@@ -49,7 +49,7 @@ defmodule Pinpointr.RoomStateTest do
 
     assert player == nil
     assert Dict.size(state.players) == 1
-    assert state.game_state == :game_countdown
+    assert state.game_state == :round_starting
   end
 
   test "remove_player/2 changes game_state to :waiting_for_players" do
@@ -67,5 +67,18 @@ defmodule Pinpointr.RoomStateTest do
 
     RoomState.add_player(1, "player1")
     assert RoomState.get_player(1, "player1") == %Player{name: "player1"}
+  end
+
+  test "player_ready/3 toggles player ready" do
+    RoomState.start_link(1)
+
+    RoomState.add_player(1, "player1")
+    assert RoomState.get_player(1, "player1").ready == false
+
+    RoomState.player_ready(1, "player1", true)
+    assert RoomState.get_player(1, "player1").ready == true
+
+    RoomState.player_ready(1, "player1", false)
+    assert RoomState.get_player(1, "player1").ready == false
   end
 end
