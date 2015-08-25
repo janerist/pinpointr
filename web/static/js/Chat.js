@@ -1,5 +1,3 @@
-import {SetFullHeightMixin} from "./mixins";
-
 let ChatMessage = React.createClass({
   render() {
     let isAnnouncement = !this.props.message.from;

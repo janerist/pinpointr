@@ -32,8 +32,8 @@ defmodule Pinpointr.RoomChannel do
    # Do nothing when leaving the lobby
   end
   def terminate(_reason, 
-                socket = %Socket{assigns: assigns, topic: "rooms:" <> room_id}) do
-    player = RoomState.remove_player(room_id, assigns[:name])
+                socket = %Socket{topic: "rooms:" <> room_id}) do
+    player = RoomState.remove_player(room_id, socket.assigns[:name])
     broadcast! socket, "player:left", %{player: player}
     broadcast_room_updated_to_lobby room_id
   end
@@ -47,8 +47,8 @@ defmodule Pinpointr.RoomChannel do
 
   def handle_in("player:ready", 
                 %{"ready" => ready}, 
-                socket = %Socket{assigns: assigns, topic: "rooms:" <> room_id}) do
-    player = RoomState.player_ready(room_id, assigns[:name], ready)
+                socket = %Socket{topic: "rooms:" <> room_id}) do
+    player = RoomState.player_ready(room_id, socket.assigns[:name], ready)
     broadcast!(socket, "player:ready", %{player: player})
     {:noreply, socket}
   end

@@ -17,3 +17,14 @@ html {
 .scoreboard table {
   table-layout: fixed;
 }
+
+.countdown .badge {
+  font-size: 155%;
+  width: 50px;
+  padding: 5px;
+}
+
+.gameStateMessage {
+  font-size: 155%;
+  padding: 5px;
+}
