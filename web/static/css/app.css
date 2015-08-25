@@ -13,3 +13,7 @@ html {
 .chatScroll {
     overflow-y: auto;
 }
+
+.scoreboard table {
+  table-layout: fixed;
+}

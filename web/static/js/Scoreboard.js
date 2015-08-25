@@ -2,7 +2,7 @@
 let Scoreboard = React.createClass({
   render() {
     return (
-      <div className="panel panel-default">
+      <div className="scoreboard panel panel-default">
         <table className="table">
           <thead>
             <tr>
