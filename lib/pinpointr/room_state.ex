@@ -23,7 +23,7 @@ defmodule Pinpointr.RoomState do
         players: Dict.put_new(state.players, name, player),
         game_state: 
           case state.game_state do
-            :waiting_for_players -> :game_countdown
+            :waiting_for_players -> :round_starting
             _ -> state.game_state
           end}}
     end)
