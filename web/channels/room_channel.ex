@@ -21,7 +21,8 @@ defmodule Pinpointr.RoomChannel do
     end
   end
 
-  def handle_info({:after_join, player}, socket = %Socket{topic: "rooms:" <> room_id}) do
+  def handle_info({:after_join, player}, 
+                  socket = %Socket{topic: "rooms:" <> room_id}) do
     broadcast! socket, "player:joined", %{player: player}
     broadcast_room_updated_to_lobby room_id
     {:noreply, socket}
@@ -30,7 +31,8 @@ defmodule Pinpointr.RoomChannel do
   def terminate(_reason, %Socket{topic: "rooms:lobby"}) do
    # Do nothing when leaving the lobby
   end
-  def terminate(_reason, socket = %Socket{assigns: assigns, topic: "rooms:" <> room_id}) do
+  def terminate(_reason, 
+                socket = %Socket{assigns: assigns, topic: "rooms:" <> room_id}) do
     player = RoomState.remove_player(room_id, assigns[:name])
     broadcast! socket, "player:left", %{player: player}
     broadcast_room_updated_to_lobby room_id
@@ -40,6 +42,14 @@ defmodule Pinpointr.RoomChannel do
     broadcast!(socket, "chat:message", 
                %{from: socket.assigns[:name], 
                message: message})
+    {:noreply, socket}
+  end
+
+  def handle_in("player:ready", 
+                %{"ready" => ready}, 
+                socket = %Socket{assigns: assigns, topic: "rooms:" <> room_id}) do
+    player = RoomState.player_ready(room_id, assigns[:name], ready)
+    broadcast!(socket, "player:ready", %{player: player})
     {:noreply, socket}
   end
 
