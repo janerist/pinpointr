@@ -1,14 +1,9 @@
+import {SetFullHeightMixin} from "./mixins";
+
 let Map = React.createClass({
-  handleResize() {
-    let $mapDiv = $("#map");
-    let offset = $mapDiv.offset();
-    $mapDiv.height($(window).height() - offset.top);
-  },
-
+  mixins: [SetFullHeightMixin],
+  
   componentDidMount() {
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
-
     let [z, x, y] = this.props.zxy.split("/");
     this.map = L.map("map", {
       doubleClickZoom: false
@@ -17,10 +12,6 @@ let Map = React.createClass({
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
-  },
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize);
   },
 
   render() {

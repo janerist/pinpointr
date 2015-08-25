@@ -1,3 +1,7 @@
+html {
+    overflow-y: scroll; 
+},
+
 .chatAnnouncement {
     font-weight: bold;
 }
@@ -7,6 +11,5 @@
 }
 
 .chatScroll {
-    height: 190px;
     overflow-y: auto;
 }

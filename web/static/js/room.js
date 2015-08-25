@@ -3,11 +3,14 @@ import NameInputModal from "./NameInputModal";
 import Map from "./Map";
 import Scoreboard from "./Scoreboard";
 import Chat from "./Chat";
+import StatusArea from "./StatusArea";
+import CountdownModal from "./CountdownModal";
 
 let Room = React.createClass({
   getInitialState() {
     return { 
-      players: [] 
+      players: [],
+      gameState: "waiting_for_players"
     };
   },
 
@@ -30,10 +33,14 @@ let Room = React.createClass({
 
         this.socket = socket;
         this.channel = channel;
-        this.setState(roomState);
+        this.setState({
+          players: roomState.players,
+          gameState: roomState.game_state
+        });
 
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
+        channel.on("player:ready", this.playerReady);
         channel.on("chat:message", this.refs.chat.addMessage);
       })
       .receive("error", response => {
@@ -44,7 +51,8 @@ let Room = React.createClass({
 
   playerJoined({player}) {
     this.setState({
-      players: this.state.players.filter(p => p.name !== player.name).concat(player)
+      players: this.state.players.filter(p => p.name !== player.name).concat(player),
+      gameState: this.state.gameState
     });
 
     this.refs.chat.addMessage({
@@ -54,11 +62,19 @@ let Room = React.createClass({
 
   playerLeft({player}) {
     this.setState({
-      players: this.state.players.filter(p => p.name !== player.name)
+      players: this.state.players.filter(p => p.name !== player.name),
+      gameState: this.state.gameState
     });
 
     this.refs.chat.addMessage({
       message: `${player.name} has left the room.`
+    });
+  },
+
+  playerReady({player}) {
+    this.setState({
+      players: this.state.players.filter(p => p.name !== player.name).concat(player),
+      gameState: this.state.gameState
     });
   },
 
@@ -70,25 +86,25 @@ let Room = React.createClass({
     this.channel.push("chat:message", {message: message});
   },
 
+  handleToggleReady(ready) {
+    this.channel.push("player:ready", {ready: ready})
+  },
+
   render() {
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="col-lg-9">
-          </div>
-          <div className="col-lg-3">
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-9">
+            <StatusArea ref="status" />
             <Map zxy={this.props.zxy} />
           </div>
           <div className="col-lg-3">
-            <Scoreboard players={this.state.players} />
             <Chat ref="chat" messageSubmitted={this.handleMessageSubmitted} />
           </div>
         </div>
         <NameInputModal ref="nameModal" nameSubmitted={this.join} />
+        <CountdownModal ref="countdownModal" {...this.state} 
+          readyToggled={this.handleToggleReady} />
       </div>
     );
   }

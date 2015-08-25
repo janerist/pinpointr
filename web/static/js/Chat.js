@@ -1,3 +1,5 @@
+import {SetFullHeightMixin} from "./mixins";
+
 let ChatMessage = React.createClass({
   render() {
     let isAnnouncement = !this.props.message.from;
@@ -56,11 +58,32 @@ let ChatInput = React.createClass({
 let Chat = React.createClass({
   componentDidMount() {
     this.MAX_MESSAGES = 100;
+    window.addEventListener("resize", this.setChatScrollHeight);
+    this.setChatScrollHeight();
+  },
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.setChatScrollHeight);
+  },
+
+  setChatScrollHeight() {
+    let $chatScroll = $(React.findDOMNode(this.refs.chatScroll));
+    let $chatInput = $(React.findDOMNode(this.refs.chatInput));
+    let offset = $chatScroll.offset(); 
+
+    if ($(window).width() >= 1180) {
+      let height = $(window).height() - offset.top - $chatInput.height() - 50;
+      $chatScroll.height(height);  
+    } else {
+      let height = 200;
+      $chatScroll.height(height); 
+    }
   },
 
   getInitialState() {
     return { 
-      messages: [] 
+      messages: [],
+      hidden: false
     };
   },
 
@@ -77,19 +100,26 @@ let Chat = React.createClass({
     chatScroll.scrollTop = chatScroll.scrollHeight;
   },
 
+  toggleChat() {
+    this.setState({
+      messages: this.state.messages,
+      hidden: !this.state.hidden
+    });
+  },
+
   render() {
     return (
       <div className="panel panel-default">
         <div className="panel-body">
           <div className="chatScroll" ref="chatScroll">
             <ul className="list-unstyled">
-              {this.state.messages.map(m => {
-                return <ChatMessage message={m} />;
+              {this.state.messages.map((m, i) => {
+                return <ChatMessage key={i} message={m} />;
               })}
             </ul>
           </div>
         </div>
-        <div className="panel-footer">
+        <div className="chatInput panel-footer" ref="chatInput">
           <ChatInput messageSubmitted={this.props.messageSubmitted} />
         </div>
       </div>

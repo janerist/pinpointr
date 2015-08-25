@@ -8,6 +8,7 @@ let Scoreboard = React.createClass({
             <tr>
               <th>Name</th>
               <th className="text-right">Points</th>
+              <th className="text-right">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -16,6 +17,7 @@ let Scoreboard = React.createClass({
               <tr key={player.name}>
                 <td>{player.name}</td>
                 <td className="text-right">{player.points}</td>
+                <td className="text-right">{player.ready ? "Ready" : "Not ready"}</td>
               </tr>
             );
           })}
