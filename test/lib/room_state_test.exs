@@ -61,24 +61,17 @@ defmodule Pinpointr.RoomStateTest do
     assert RoomState.get_state(1).game_state == :waiting_for_players
   end
 
-  test "get_player/2 gets a player or nil" do
-    RoomState.start_link(1)
-    assert RoomState.get_player(1, "player1") == nil
-
-    RoomState.add_player(1, "player1")
-    assert RoomState.get_player(1, "player1") == %Player{name: "player1"}
-  end
-
-  test "player_ready/3 toggles player ready" do
+  test "update player/3 updates player fields" do
     RoomState.start_link(1)
 
     RoomState.add_player(1, "player1")
-    assert RoomState.get_player(1, "player1").ready == false
+    
+    assert RoomState.get_state(1).players["player1"].ready == false
+    RoomState.update_player(1, "player1", ready: true)
+    assert RoomState.get_state(1).players["player1"].ready == true
 
-    RoomState.player_ready(1, "player1", true)
-    assert RoomState.get_player(1, "player1").ready == true
-
-    RoomState.player_ready(1, "player1", false)
-    assert RoomState.get_player(1, "player1").ready == false
+    RoomState.update_player(1, "player1", ready: false, points: 100)
+    assert RoomState.get_state(1).players["player1"].ready == false
+    assert RoomState.get_state(1).players["player1"].points == 100
   end
 end

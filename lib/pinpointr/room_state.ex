@@ -43,18 +43,12 @@ defmodule Pinpointr.RoomState do
     end)
   end
 
-  def player_ready(room_id, name, ready) do
+  def update_player(room_id, name, fields) do
     Agent.get_and_update(room(room_id), fn state ->
       players = Dict.update!(state.players, name, fn player ->
-        %Player{player | ready: ready}
+        struct(player, fields)
       end)
       {Dict.get(players, name), %{state | players: players}}
-    end)
-  end
-
-  def get_player(room_id, name) do
-    Agent.get(room(room_id), fn state ->
-      Dict.get(state.players, name)
     end)
   end
 

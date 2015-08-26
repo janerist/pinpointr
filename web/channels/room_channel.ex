@@ -12,7 +12,7 @@ defmodule Pinpointr.RoomChannel do
   end
 
   def join("rooms:" <> room_id, %{"name" => name}, socket) do
-    if RoomState.get_player(room_id, name) do
+    if RoomState.get_state(room_id).players[name] do
       {:error, %{"reason" => "Name is taken. Please choose another one."}}
     else
       player = RoomState.add_player(room_id, name)
@@ -48,7 +48,7 @@ defmodule Pinpointr.RoomChannel do
   def handle_in("player:ready", 
                 %{"ready" => ready}, 
                 socket = %Socket{topic: "rooms:" <> room_id}) do
-    player = RoomState.player_ready(room_id, socket.assigns[:name], ready)
+    player = RoomState.update_player(room_id, socket.assigns[:name], ready: ready)
     broadcast!(socket, "player:ready", %{player: player})
     {:noreply, socket}
   end
