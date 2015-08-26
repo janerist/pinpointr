@@ -43,17 +43,28 @@ defmodule Pinpointr.RoomStateTest do
     assert Dict.size(state.players) == 1
   end
 
-  test "update player/3 updates player fields" do
+  test "update player_fields/3 updates player fields" do
     RoomState.start_link(1)
 
     RoomState.add_player(1, "player1")
     
     assert RoomState.get_state(1).players["player1"].ready == false
-    RoomState.update_player(1, "player1", ready: true)
+    RoomState.update_player_fields(1, "player1", ready: true)
     assert RoomState.get_state(1).players["player1"].ready == true
 
-    RoomState.update_player(1, "player1", ready: false, points: 100)
+    RoomState.update_player_fields(1, "player1", ready: false, points: 100)
     assert RoomState.get_state(1).players["player1"].ready == false
     assert RoomState.get_state(1).players["player1"].points == 100
+  end
+
+  test "update_playeer/3 updates player" do
+    RoomState.start_link(1)
+    RoomState.add_player(1, "player1")
+
+    RoomState.update_player(1, "player1", fn player -> 
+      %Player{points: player.points + 10}
+    end)
+
+    assert RoomState.get_state(1).players["player1"].points == 10
   end
 end

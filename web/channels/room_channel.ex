@@ -48,7 +48,9 @@ defmodule Pinpointr.RoomChannel do
   def handle_in("player:ready", 
                 %{"ready" => ready}, 
                 socket = %Socket{topic: "rooms:" <> room_id}) do
-    player = RoomState.update_player(room_id, socket.assigns[:name], ready: ready)
+    player = RoomState.update_player_fields(room_id, 
+                                            socket.assigns[:name],
+                                            ready: ready)
     broadcast!(socket, "player:ready", %{player: player})
     {:noreply, socket}
   end
