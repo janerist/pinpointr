@@ -54,6 +54,12 @@ let ChatInput = React.createClass({
 });
 
 let Chat = React.createClass({
+  getInitialState() {
+    return { 
+      messages: [],
+    };
+  },
+
   componentDidMount() {
     this.MAX_MESSAGES = 100;
     window.addEventListener("resize", this.setChatScrollHeight);
@@ -78,13 +84,6 @@ let Chat = React.createClass({
     }
   },
 
-  getInitialState() {
-    return { 
-      messages: [],
-      hidden: false
-    };
-  },
-
   addMessage(message) {
     var messages = this.state.messages;
     if (messages.length === this.MAX_MESSAGES) {
@@ -96,13 +95,6 @@ let Chat = React.createClass({
 
     let chatScroll = React.findDOMNode(this.refs.chatScroll);
     chatScroll.scrollTop = chatScroll.scrollHeight;
-  },
-
-  toggleChat() {
-    this.setState({
-      messages: this.state.messages,
-      hidden: !this.state.hidden
-    });
   },
 
   render() {

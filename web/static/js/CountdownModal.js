@@ -40,6 +40,14 @@ let CountdownModal = React.createClass({
     $(this.getDOMNode()).modal("hide");
   },
 
+  setCountdown(countdown) {
+    this.setState({
+      message: this.state.message,
+      countdown: countdown,
+      ready: this.state.ready
+    });
+  },
+
   getGameStateMessage(gameState) {
     switch (gameState) {
       case "round_starting":

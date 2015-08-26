@@ -42,6 +42,7 @@ let Room = React.createClass({
         channel.on("player:left", this.playerLeft);
         channel.on("player:ready", this.playerReady);
         channel.on("chat:message", this.refs.chat.addMessage);
+        channel.on("countdown", this.countdown);
       })
       .receive("error", response => {
         alert(response.reason);
@@ -76,6 +77,10 @@ let Room = React.createClass({
       players: this.state.players.filter(p => p.name !== player.name).concat(player),
       gameState: this.state.gameState
     });
+  },
+
+  countdown({countdown}) {
+    this.refs.countdownModal.setCountdown(countdown);
   },
 
   handleMessageSubmitted(message) {
