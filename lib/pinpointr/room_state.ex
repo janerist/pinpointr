@@ -9,37 +9,19 @@ defmodule Pinpointr.RoomState do
     Agent.start_link(fn -> @initial_state end, name: room(room_id))
   end
 
-  def get_state(room_id) do
-    Agent.get(room(room_id), fn state -> 
-      state
-    end)
-  end
+  def get_state(room_id), do: Agent.get(room(room_id), fn state -> state end)
 
   def add_player(room_id, name) do
     Agent.get_and_update(room(room_id), fn state ->
       player = %Player{name: name}
-      {player, %{
-        state | 
-        players: Dict.put_new(state.players, name, player),
-        game_state: 
-          case state.game_state do
-            :waiting_for_players -> :round_starting
-            _ -> state.game_state
-          end}}
+      {player, %{ state | players: Dict.put_new(state.players, name, player)}}
     end)
   end
 
   def remove_player(room_id, name) do
     Agent.get_and_update(room(room_id), fn state -> 
       player = Dict.get(state.players, name)
-      {player, %{
-        state | 
-        players: Dict.delete(state.players, name),
-        game_state:
-          case {Dict.size(state.players), player} do
-            {1, %Player{}} -> :waiting_for_players
-            _ -> state.game_state
-          end}}
+      {player, %{state | players: Dict.delete(state.players, name)}}
     end)
   end
 
