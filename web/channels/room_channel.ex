@@ -14,12 +14,12 @@ defmodule Pinpointr.RoomChannel do
   end
   def join("rooms:" <> _room_id, %{"name" => name}, socket) do
     game = get_game(socket.topic)
-    if GameServer.get_state(game).players[name] do
-      {:error, %{"reason" => "Name is taken. Please choose another one."}}
-    else
-      player = GameServer.add_player(game, name)
-      send(self, {:after_join, game, player})
-      {:ok, get_state(game), assign(socket, :name, name)}
+    case GameServer.add_player(game, name) do
+      {:ok, player} -> 
+        send(self, {:after_join, game, player})
+        {:ok, GameServer.get_state(game), assign(socket, :name, name)}
+      {:error, "Player name taken"} ->
+        {:error, %{"reason" => "Name is taken. Please choose another one."}}
     end
   end
 
@@ -30,7 +30,7 @@ defmodule Pinpointr.RoomChannel do
   end
   def terminate(_reason, socket) do
     game = get_game(socket.topic)
-    player = GameServer.remove_player(game, socket.assigns[:name])
+    {:ok, player} = GameServer.remove_player(game, socket.assigns[:name])
     broadcast!(socket, "player:left", %{player: player})
     broadcast_room_updated_to_lobby(game)
   end
@@ -66,7 +66,7 @@ defmodule Pinpointr.RoomChannel do
     Endpoint.broadcast_from!(self(), 
                              "rooms:lobby", 
                              "room:updated", 
-                             %{room: get_state(game)})
+                             %{room: GameServer.get_state(game)})
   end
 
   defp get_game("rooms:" <> room_id) do
@@ -75,15 +75,10 @@ defmodule Pinpointr.RoomChannel do
     game
   end
 
-  defp get_state(game) do
-    state = GameServer.get_state(game)
-    %{state | players: Dict.values(state.players)}
-  end
-
   defp get_room_list do
     Repo.all(Room) 
     |> Enum.map(fn room -> "rooms:" <> to_string(room.id) end)
     |> Enum.map(&get_game/1)
-    |> Enum.map(&get_state/1)
+    |> Enum.map(&GameServer.get_state/1)
   end
 end
