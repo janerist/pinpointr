@@ -1,4 +1,4 @@
-defmodule Pinpointr.Game do
+defmodule Pinpointr.GameServer do
   alias Pinpointr.Player
 
   def start_link(id, name) do

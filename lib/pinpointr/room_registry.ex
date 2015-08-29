@@ -1,6 +1,6 @@
 defmodule Pinpointr.RoomRegistry do
   use GenServer
-  alias Pinpointr.Game
+  alias Pinpointr.GameServer
 
   # Client API
   def start_link(opts \\ []) do
@@ -28,7 +28,7 @@ defmodule Pinpointr.RoomRegistry do
     if HashDict.has_key?(rooms, room_id) do
       {:reply, HashDict.fetch(rooms, room_id), rooms}
     else
-      {:ok, game} = Game.start_link(room_id, room_name)
+      {:ok, game} = GameServer.start_link(room_id, room_name)
       {:reply, game, HashDict.put(rooms, room_id, game)}
     end
   end
