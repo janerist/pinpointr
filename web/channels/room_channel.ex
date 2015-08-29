@@ -59,21 +59,11 @@ defmodule Pinpointr.RoomChannel do
     Endpoint.broadcast_from!(self(), 
                              "rooms:lobby", 
                              "room:updated", 
-                             %{room: get_room(room_id)})
+                             %{room: get_room_state(room_id)})
   end
 
   defp get_room_list do
-    Repo.all(Room) |> Enum.map &to_client_room/1
-  end
-
-  defp get_room(room_id) do
-    from(r in Room, where: r.id == ^room_id)
-     |> Repo.one
-     |> to_client_room
-  end
-
-  defp to_client_room(room) do
-    %{id: room.id, name: room.name, state: get_room_state(room.id)} 
+    Repo.all(Room) |> Enum.map fn room -> get_room_state(room.id) end
   end
 
   defp get_room_state(room_id) do

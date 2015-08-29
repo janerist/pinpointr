@@ -4,16 +4,17 @@ defmodule Pinpointr.RoomStateTest do
   alias Pinpointr.Player
 
   test "start_link/1 sets initial state" do
-    RoomState.start_link(1)
-
+    RoomState.start_link(1, "TestRoom")
     state = RoomState.get_state(1)
 
+    assert state.id == 1
+    assert state.name == "TestRoom"
     assert state.players == %HashDict{}
     assert state.game_state == :waiting_for_players 
   end
 
   test "add_player/2 adds a player" do
-    RoomState.start_link(1)
+    RoomState.start_link(1, "TestRoom")
 
     RoomState.add_player(1, "player1")
     players = RoomState.get_state(1).players
@@ -23,7 +24,7 @@ defmodule Pinpointr.RoomStateTest do
   end
 
   test "remove_player/2 removes a player" do
-    RoomState.start_link(1)
+    RoomState.start_link(1, "TestRoom")
 
     added_player = RoomState.add_player(1, "player1")
     removed_player = RoomState.remove_player(1, "player1")
@@ -33,7 +34,7 @@ defmodule Pinpointr.RoomStateTest do
   end
 
   test "remove_player/2 handles being passed non-existing player" do
-    RoomState.start_link(1)
+    RoomState.start_link(1, "TestRoom")
 
     RoomState.add_player(1, "player1")
     player = RoomState.remove_player(1, "fubar")
@@ -44,7 +45,7 @@ defmodule Pinpointr.RoomStateTest do
   end
 
   test "update player_fields/3 updates player fields" do
-    RoomState.start_link(1)
+    RoomState.start_link(1, "TestRoom")
 
     RoomState.add_player(1, "player1")
     
@@ -58,7 +59,7 @@ defmodule Pinpointr.RoomStateTest do
   end
 
   test "update_playeer/3 updates player" do
-    RoomState.start_link(1)
+    RoomState.start_link(1, "TestRoom")
     RoomState.add_player(1, "player1")
 
     RoomState.update_player(1, "player1", fn player -> 

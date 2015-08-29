@@ -1,12 +1,13 @@
 defmodule Pinpointr.RoomState do
   alias Pinpointr.Player
 
-  @initial_state %{ 
-    players: HashDict.new, 
-    game_state: :waiting_for_players} 
-
-  def start_link(room_id) do
-    Agent.start_link(fn -> @initial_state end, name: room(room_id))
+  def start_link(id, name) do
+    Agent.start_link(fn -> %{
+      id: id,
+      name: name,
+      players: HashDict.new,
+      game_state: :waiting_for_players} 
+    end, name: room(id))
   end
 
   def get_state(room_id), do: Agent.get(room(room_id), fn state -> state end)

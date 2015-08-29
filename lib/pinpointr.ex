@@ -25,7 +25,7 @@ defmodule Pinpointr do
     # Each room starts a child worker "Pinpointr.RoomState"
     Enum.map Pinpointr.Repo.all(Pinpointr.Room), fn room ->
       Supervisor.start_child(supervisor, 
-                             worker(Pinpointr.RoomState, [room.id]))
+                             worker(Pinpointr.RoomState, [room.id, room.name]))
     end
 
     {:ok, supervisor}

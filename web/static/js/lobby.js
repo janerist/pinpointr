@@ -2,10 +2,10 @@ import {Socket} from "deps/phoenix/web/static/js/phoenix";
 
 let RoomPopover = React.createClass({
   render() {
-    if (this.props.state.players.length) {
+    if (this.props.players.length) {
       return (
         <ul className="list-unstyled">
-          {this.props.state.players.map(player => {
+          {this.props.players.map(player => {
             return (
               <li key={player.name}>
                 <i className="glyphicon glyphicon-user"></i> {player.name}
@@ -19,7 +19,6 @@ let RoomPopover = React.createClass({
     }
   }
 });
-
 let RoomNode = React.createClass({
   componentDidMount() {
     let el = $(React.findDOMNode(this.refs.roomButton));
@@ -46,7 +45,7 @@ let RoomNode = React.createClass({
            ref="roomButton">
           <h4>{this.props.name}</h4>
           <i className="glyphicon glyphicon-user"></i>
-        &nbsp;{this.props.state.players.length}
+        &nbsp;{this.props.players.length}
         </a>
       </li>
     );
