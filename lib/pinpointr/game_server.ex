@@ -36,12 +36,18 @@ defmodule Pinpointr.GameServer do
     {:ok, %{id: id,
             name: name,
             players: HashDict.new,
-            game_state: :waiting_for_players}}
+            game_state: :waiting_for_players,
+            countdown: nil}}
   end
 
   def handle_call(:get_state, _from, state) do
     {:reply,
-     %{state | players: HashDict.values(state.players)}, 
+     %{
+      id: state.id,
+      name: state.name,
+      players: HashDict.values(state.players),
+      game_state: state.game_state
+     },
      state}
   end
 
@@ -52,8 +58,8 @@ defmodule Pinpointr.GameServer do
       player = %Player{name: name}
       new_state = %{state | players: HashDict.put(state.players, name, player)}
       if state.game_state == :waiting_for_players do
-        new_state = %{new_state | game_state: :round_starting}
-        Countdown.start(10, :round_started)
+        countdown = Countdown.start(10, :round_started)
+        new_state = %{new_state | game_state: :round_starting, countdown: countdown}
         broadcast_to_room(state.id, 
                   "gamestate:changed", 
                   %{game_state: new_state.game_state})
@@ -88,15 +94,26 @@ defmodule Pinpointr.GameServer do
                       %{game_state: next_gs})
     {:noreply, %{state | game_state: next_gs}}
   end
-  def handle_info({:countdown, countdown, _next_gs}, state) do
-    broadcast_to_room(state.id, "countdown", %{countdown: countdown})
-    {:noreply, state}
+  def handle_info({:countdown, countdown, next_gs}, state) do
+    if all_players_ready(state.players) do
+      Countdown.stop(state.countdown)
+      send(self, {:countdown, :finished, next_gs})
+      {:noreply, %{state | countdown: nil}}
+    else
+      broadcast_to_room(state.id, "countdown", %{countdown: countdown})
+      {:noreply, state}
+    end
   end
 
   # Private helper functions
   # --------------------------------------------------------------------------
-  def broadcast_to_room(room_id, message, args) do
+  defp broadcast_to_room(room_id, message, args) do
     Endpoint.broadcast!("rooms:" <> to_string(room_id), message, args)
+  end
+
+  defp all_players_ready(players) do
+    HashDict.values(players)
+    |> Enum.all? fn player -> player.ready end
   end
 end
 
