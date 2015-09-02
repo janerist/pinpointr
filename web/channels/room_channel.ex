@@ -18,6 +18,7 @@ defmodule Pinpointr.RoomChannel do
       {:ok, player} -> 
         send(self, {:after_join, game, player})
         {:ok, GameServer.get_state(game), assign(socket, :name, name)}
+
       {:error, "Player name taken"} ->
         {:error, %{"reason" => "Name is taken. Please choose another one."}}
     end
@@ -30,7 +31,7 @@ defmodule Pinpointr.RoomChannel do
   end
   def terminate(_reason, socket) do
     game = get_game(socket.topic)
-    {:ok, player} = GameServer.remove_player(game, socket.assigns[:name])
+    player = GameServer.remove_player(game, socket.assigns[:name])
     broadcast!(socket, "player:left", %{player: player})
     broadcast_room_updated_to_lobby(game)
   end
@@ -60,13 +61,17 @@ defmodule Pinpointr.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_info({:game_state_changed, game_state}, socket) do
+    broadcast!(socket, "gamestate:changed", %{game_state: game_state})
+    {:noreply, socket}
+  end
+
   # Private helper functions
   # --------------------------------------------------------------------------
   defp broadcast_room_updated_to_lobby(game) do
-    Endpoint.broadcast_from!(self(), 
-                             "rooms:lobby", 
-                             "room:updated", 
-                             %{room: GameServer.get_state(game)})
+    Endpoint.broadcast!("rooms:lobby", 
+                        "room:updated", 
+                        %{room: GameServer.get_state(game)})
   end
 
   defp get_game("rooms:" <> room_id) do

@@ -32,7 +32,7 @@ defmodule Pinpointr.GameServerTest do
 
   test "remove_player/2 removes a player", %{game: game} do
     {:ok, added_player} = GameServer.add_player(game, "player1")
-    {:ok, removed_player} = GameServer.remove_player(game, "player1")
+    removed_player = GameServer.remove_player(game, "player1")
 
     assert GameServer.get_state(game).players == []
     assert added_player == removed_player
@@ -41,7 +41,7 @@ defmodule Pinpointr.GameServerTest do
   test "remove_player/2 handles being passed non-existing player", 
        %{game: game} do
     GameServer.add_player(game, "player1")
-    {:ok, player} = GameServer.remove_player(game, "fubar")
+    player = GameServer.remove_player(game, "fubar")
     state = GameServer.get_state(game)
 
     assert player == nil

@@ -5,7 +5,7 @@ defmodule Pinpointr.GameServer do
   # Client API
   # --------------------------------------------------------------------------
   def start_link(id, name, opts \\ []) do
-    GenServer.start_link(__MODULE__, {:ok, id, name}, opts)
+    GenServer.start_link(__MODULE__, {id, name}, opts)
   end
 
   def get_state(game) do
@@ -30,7 +30,7 @@ defmodule Pinpointr.GameServer do
 
   # Server callbacks
   # --------------------------------------------------------------------------
-  def init({:ok, id, name}) do
+  def init({id, name}) do
     {:ok, %{id: id,
             name: name,
             players: HashDict.new,
@@ -38,15 +38,21 @@ defmodule Pinpointr.GameServer do
   end
 
   def handle_call(:get_state, _from, state) do
-    {:reply, %{state | players: HashDict.values(state.players)}, state}
+    {:reply,
+     %{state | players: HashDict.values(state.players)}, 
+     state}
   end
 
-  def handle_call({:add_player, name}, _from, state) do
+  def handle_call({:add_player, name}, {caller, _ref}, state) do
     if HashDict.has_key?(state.players, name) do
       {:reply, {:error, "Player name taken"}, state}
     else
       player = %Player{name: name}
       new_state = %{state | players: HashDict.put(state.players, name, player)}
+      if state.game_state == :waiting_for_players do
+        new_state = %{new_state | game_state: :round_starting}
+        send(caller, {:game_state_changed, new_state.game_state})
+      end
       {:reply, {:ok, player}, new_state}
     end
   end
@@ -54,14 +60,13 @@ defmodule Pinpointr.GameServer do
   def handle_call({:remove_player, name}, _from, state) do
     player = Dict.get(state.players, name)
     new_state = %{state | players: HashDict.delete(state.players, name)}
-    {:reply, {:ok, player}, new_state}
+    {:reply, player, new_state}
   end
 
   def handle_call({:update_player, name, fun}, _from, state) do
     players = Dict.update!(state.players, name, fun)
     player = HashDict.get(players, name)
     new_state = %{state | players: players}
-    {:reply, {:ok, player}, new_state}
+    {:reply, player, new_state}
   end
-  
 end
