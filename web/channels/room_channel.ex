@@ -49,7 +49,7 @@ defmodule Pinpointr.RoomChannel do
     player = GameServer.update_player_fields(game, 
                                        socket.assigns[:name],
                                        ready: ready)
-    broadcast!(socket, "player:ready", %{player: player})
+    broadcast!(socket, "player:updated", %{player: player})
     {:noreply, socket}
   end
 

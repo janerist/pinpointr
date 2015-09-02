@@ -62,7 +62,7 @@ defmodule Pinpointr.GameServer do
         new_state = %{new_state | game_state: :round_starting, countdown: countdown}
         broadcast_to_room(state.id, 
                   "gamestate:changed", 
-                  %{game_state: new_state.game_state})
+                  %{game_state: new_state.game_state, players: new_state.players})
       end
       {:reply, {:ok, player}, new_state}
     end
@@ -89,16 +89,14 @@ defmodule Pinpointr.GameServer do
   # Messages
   # --------------------------------------------------------------------------
   def handle_info({:countdown, :finished, next_gs}, state) do
-    broadcast_to_room(state.id, 
-                      "gamestate:changed", 
-                      %{game_state: next_gs})
-    {:noreply, %{state | game_state: next_gs}}
+    new_state = countdown_finished(next_gs, state)
+    {:noreply, new_state}
   end
   def handle_info({:countdown, countdown, next_gs}, state) do
-    if all_players_ready(state.players) do
+    if all_players_ready?(state.players) do
       Countdown.stop(state.countdown)
-      send(self, {:countdown, :finished, next_gs})
-      {:noreply, %{state | countdown: nil}}
+      new_state = countdown_finished(next_gs, state)
+      {:noreply, new_state}
     else
       broadcast_to_room(state.id, "countdown", %{countdown: countdown})
       {:noreply, state}
@@ -111,9 +109,20 @@ defmodule Pinpointr.GameServer do
     Endpoint.broadcast!("rooms:" <> to_string(room_id), message, args)
   end
 
-  defp all_players_ready(players) do
+  defp all_players_ready?(players) do
     HashDict.values(players)
     |> Enum.all? fn player -> player.ready end
   end
-end
 
+  defp countdown_finished(next_gs, state) do
+    # Set all players not ready
+    players = 
+      for {n, p} <- state.players, into: HashDict.new, do: {n, %Player{p | ready: false}}
+
+    broadcast_to_room(state.id, 
+                      "gamestate:changed", 
+                      %{game_state: next_gs, players: players})
+
+    %{state | game_state: next_gs, players: players, countdown: nil}
+  end
+end
