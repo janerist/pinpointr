@@ -61,11 +61,6 @@ defmodule Pinpointr.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_info({:game_state_changed, game_state}, socket) do
-    broadcast!(socket, "gamestate:changed", %{game_state: game_state})
-    {:noreply, socket}
-  end
-
   # Private helper functions
   # --------------------------------------------------------------------------
   defp broadcast_room_updated_to_lobby(game) do

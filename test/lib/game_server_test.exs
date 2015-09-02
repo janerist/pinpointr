@@ -18,21 +18,30 @@ defmodule Pinpointr.GameServerTest do
   end
 
   test "add_player/2 adds a player", %{game: game} do
-    {:ok, _player} = GameServer.add_player(game, "player1")
+    {:ok, _player} = GameServer.add_player(game, "p1")
     players = GameServer.get_state(game).players
 
     assert length(players) == 1
-    assert List.first(players) == %Player{name: "player1"}
+    assert List.first(players) == %Player{name: "p1"}
   end
 
   test "add_player/2 checks if player exists", %{game: game} do
-    GameServer.add_player(game, "player1")
-    {:error, "Player name taken"} = GameServer.add_player(game, "player1")
+    GameServer.add_player(game, "p1")
+    assert GameServer.add_player(game, "p1") == {:error, "Player name taken"}
+  end
+
+  test "add_player/2 triggers game state change", %{game: game} do
+    GameServer.add_player(game, "p1")
+    assert GameServer.get_state(game).game_state == :round_starting
+  end
+
+  test "add_player/2 triggers countdown", %{game: game} do
+    # TODO
   end
 
   test "remove_player/2 removes a player", %{game: game} do
-    {:ok, added_player} = GameServer.add_player(game, "player1")
-    removed_player = GameServer.remove_player(game, "player1")
+    {:ok, added_player} = GameServer.add_player(game, "p1")
+    removed_player = GameServer.remove_player(game, "p1")
 
     assert GameServer.get_state(game).players == []
     assert added_player == removed_player
@@ -40,7 +49,7 @@ defmodule Pinpointr.GameServerTest do
 
   test "remove_player/2 handles being passed non-existing player", 
        %{game: game} do
-    GameServer.add_player(game, "player1")
+    GameServer.add_player(game, "p1")
     player = GameServer.remove_player(game, "fubar")
     state = GameServer.get_state(game)
 
@@ -49,21 +58,21 @@ defmodule Pinpointr.GameServerTest do
   end
 
   test "update player_fields/3 updates player fields", %{game: game} do
-    GameServer.add_player(game, "player1")
+    GameServer.add_player(game, "p1")
     
     assert List.first(get_players(game)).ready == false
-    GameServer.update_player_fields(game, "player1", ready: true)
+    GameServer.update_player_fields(game, "p1", ready: true)
     assert List.first(get_players(game)).ready == true
 
-    GameServer.update_player_fields(game, "player1", ready: false, points: 100)
+    GameServer.update_player_fields(game, "p1", ready: false, points: 100)
     assert List.first(get_players(game)).ready == false
     assert List.first(get_players(game)).points == 100
   end
 
   test "update_playeer/3 updates player", %{game: game} do
-    GameServer.add_player(game, "player1")
+    GameServer.add_player(game, "p1")
 
-    GameServer.update_player(game, "player1", fn player -> 
+    GameServer.update_player(game, "p1", fn player -> 
       %Player{points: player.points + 10}
     end)
 

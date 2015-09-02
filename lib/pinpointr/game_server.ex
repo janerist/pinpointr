@@ -1,6 +1,8 @@
 defmodule Pinpointr.GameServer do
   use GenServer
   alias Pinpointr.Player
+  alias Pinpointr.Countdown
+  alias Pinpointr.Endpoint
 
   # Client API
   # --------------------------------------------------------------------------
@@ -43,7 +45,7 @@ defmodule Pinpointr.GameServer do
      state}
   end
 
-  def handle_call({:add_player, name}, {caller, _ref}, state) do
+  def handle_call({:add_player, name}, _from, state) do
     if HashDict.has_key?(state.players, name) do
       {:reply, {:error, "Player name taken"}, state}
     else
@@ -51,7 +53,10 @@ defmodule Pinpointr.GameServer do
       new_state = %{state | players: HashDict.put(state.players, name, player)}
       if state.game_state == :waiting_for_players do
         new_state = %{new_state | game_state: :round_starting}
-        send(caller, {:game_state_changed, new_state.game_state})
+        Countdown.start(10, :round_started)
+        broadcast_to_room(state.id, 
+                  "gamestate:changed", 
+                  %{game_state: new_state.game_state})
       end
       {:reply, {:ok, player}, new_state}
     end
@@ -69,4 +74,24 @@ defmodule Pinpointr.GameServer do
     new_state = %{state | players: players}
     {:reply, player, new_state}
   end
+
+  # Messages
+  # --------------------------------------------------------------------------
+  def handle_info({:countdown, :finished, next_gs}, state) do
+    broadcast_to_room(state.id, 
+                      "gamestate:changed", 
+                      %{game_state: next_gs})
+    {:noreply, %{state | game_state: next_gs}}
+  end
+  def handle_info({:countdown, countdown, _next_gs}, state) do
+    broadcast_to_room(state.id, "countdown", %{countdown: countdown})
+    {:noreply, state}
+  end
+
+  # Private helper functions
+  # --------------------------------------------------------------------------
+  def broadcast_to_room(room_id, message, args) do
+    Endpoint.broadcast!("rooms:" <> to_string(room_id), message, args)
+  end
 end
+
