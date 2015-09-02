@@ -4,7 +4,7 @@ let CountdownModal = React.createClass({
   getInitialState() {
     return {
       message: "",
-      countdown: 0,
+      countdown: null,
       ready: false
     };
   },

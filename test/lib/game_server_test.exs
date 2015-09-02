@@ -57,6 +57,13 @@ defmodule Pinpointr.GameServerTest do
     assert length(state.players) == 1
   end
 
+  test "remove_player/2 triggers game state change", %{game: game} do
+    GameServer.add_player(game, "p1")
+    GameServer.remove_player(game, "p1")
+
+    assert GameServer.get_state(game).game_state == :waiting_for_players
+  end
+
   test "update player_fields/3 updates player fields", %{game: game} do
     GameServer.add_player(game, "p1")
     

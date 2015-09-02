@@ -65,6 +65,11 @@ defmodule Pinpointr.GameServer do
   def handle_call({:remove_player, name}, _from, state) do
     player = Dict.get(state.players, name)
     new_state = %{state | players: HashDict.delete(state.players, name)}
+
+    if HashDict.size(new_state.players) == 0 do
+      new_state = %{new_state | game_state: :waiting_for_players}
+    end
+
     {:reply, player, new_state}
   end
 
