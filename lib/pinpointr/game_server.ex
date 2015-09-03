@@ -80,18 +80,48 @@ defmodule Pinpointr.GameServer do
   # Messages
   # --------------------------------------------------------------------------
   def handle_info({:countdown, :finished, next_gs}, state) do
-    new_state = countdown_finished(next_gs, state)
+    new_state = %{state | game_state: next_gs}
+    new_state = handle_game_state_changed(next_gs, new_state)
     {:noreply, new_state}
   end
   def handle_info({:countdown, countdown, next_gs}, state) do
     if all_players_ready?(state.players) do
-      Countdown.stop(state.countdown)
-      new_state = countdown_finished(next_gs, state)
+      new_state = %{state | game_state: next_gs}
+      new_state = handle_game_state_changed(next_gs, new_state) 
       {:noreply, new_state}
     else
       broadcast_to_room(state.id, "game:countdown", %{countdown: countdown})
       {:noreply, state}
     end
+  end
+
+  # Game state change handlers
+  #---------------------------------------------------------------------------
+  def handle_game_state_changed(:waiting_for_players, state) do
+    if state.countdown do
+      Countdown.stop(state.countdown)
+      %{state | countdown: nil}
+    else
+      state
+    end
+  end
+
+  def handle_game_state_changed(:round_starting, state) do
+    countdown = Countdown.start(10, :round_started)
+    broadcast_to_room(state.id,
+                      "game:roundStarting",
+                      %{game_state: state.game_state})
+    %{state | countdown: countdown} 
+  end
+
+  def handle_game_state_changed(:round_started, state) do
+    players = 
+      for {n, p} <- state.players, into: HashDict.new, do: {n, %Player{p | ready: false}}
+    Countdown.stop(state.countdown)
+    broadcast_to_room(state.id,
+                      "game:roundStarted",
+                      %{game_state: state.game_state, players: HashDict.values(players)})
+    %{state | players: players, countdown: nil}
   end
 
   # Private helper functions
@@ -114,38 +144,4 @@ defmodule Pinpointr.GameServer do
     |> Enum.all? fn player -> player.ready end
   end
 
-  defp countdown_finished(next_gs, state) do
-    # Set all players not ready
-    players = 
-      for {n, p} <- state.players, into: HashDict.new, do: {n, %Player{p | ready: false}}
-
-    new_state = %{state | game_state: next_gs, players: players, countdown: nil}
-    handle_game_state_changed(next_gs, new_state)
-  end
-
-  def handle_game_state_changed(new_gs, state) do
-    IO.puts "game state changed to #{new_gs}"
-    case new_gs do
-      :waiting_for_players ->
-        if state.countdown do
-          Countdown.stop(state.countdown)
-          %{state | countdown: nil}
-        else
-          state
-        end
-
-      :round_starting ->
-        broadcast_to_room(state.id,
-                          "game:roundStarting",
-                          %{game_state: state.game_state})
-        countdown = Countdown.start(10, :round_started)
-        %{state | countdown: countdown} 
-
-      :round_started ->
-        broadcast_to_room(state.id,
-                          "game:roundStarted",
-                          %{game_state: state.game_state, players: HashDict.values(state.players)})
-        state
-    end 
-  end
 end
