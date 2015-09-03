@@ -54,7 +54,7 @@ defmodule Pinpointr.GameServer do
       new_state = %{state | players: HashDict.put(state.players, name, player)}
       if state.game_state == :waiting_for_players do
         new_state = %{new_state | game_state: :round_starting}
-        new_state = handle_game_state_changed(new_state.game_state, new_state)
+        new_state = handle_gs_changed(new_state.game_state, new_state)
       end
       {:reply, {:ok, player}, new_state}
     end
@@ -66,7 +66,7 @@ defmodule Pinpointr.GameServer do
 
     if HashDict.size(new_state.players) == 0 do
       new_state = %{new_state | game_state: :waiting_for_players}
-      new_state = handle_game_state_changed(new_state.game_state, new_state)
+      new_state = handle_gs_changed(new_state.game_state, new_state)
     end
 
     {:reply, player, new_state}
@@ -83,14 +83,14 @@ defmodule Pinpointr.GameServer do
   # --------------------------------------------------------------------------
   def handle_info({:countdown, :finished, next_gs}, state) do
     new_state = %{state | game_state: next_gs, countdown: nil}
-    new_state = handle_game_state_changed(next_gs, new_state)
+    new_state = handle_gs_changed(next_gs, new_state)
     {:noreply, new_state}
   end
   def handle_info({:countdown, countdown, next_gs}, state) do
     if all_players_ready?(state.players) do
       Countdown.stop(state.countdown)
       new_state = %{state | game_state: next_gs, countdown: nil}
-      new_state = handle_game_state_changed(next_gs, new_state) 
+      new_state = handle_gs_changed(next_gs, new_state) 
       {:noreply, new_state}
     else
       broadcast_to_room(state.id, "game:countdown", %{countdown: countdown})
@@ -100,7 +100,7 @@ defmodule Pinpointr.GameServer do
 
   # Game state change handlers
   #---------------------------------------------------------------------------
-  def handle_game_state_changed(:waiting_for_players, state) do
+  def handle_gs_changed(:waiting_for_players, state) do
     if state.countdown do
       Countdown.stop(state.countdown)
       %{state | countdown: nil}
@@ -109,7 +109,7 @@ defmodule Pinpointr.GameServer do
     end
   end
 
-  def handle_game_state_changed(:round_starting, state) do
+  def handle_gs_changed(:round_starting, state) do
     players = set_all_players_not_ready(state.players)
     broadcast_to_room(state.id,
                       "game:roundStarting",
@@ -120,7 +120,7 @@ defmodule Pinpointr.GameServer do
       players: players} 
   end
 
-  def handle_game_state_changed(:round_started, state) do
+  def handle_gs_changed(:round_started, state) do
     players = set_all_players_not_ready(state.players)
 
     :random.seed(:os.timestamp)
@@ -137,7 +137,7 @@ defmodule Pinpointr.GameServer do
       current_loc: next_loc}
   end
 
-  def handle_game_state_changed(:round_finished, state) do
+  def handle_gs_changed(:round_finished, state) do
     players = set_all_players_not_ready(state.players)
 
     # TODO: calculate points, find winner
