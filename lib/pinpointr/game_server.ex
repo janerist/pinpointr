@@ -41,14 +41,7 @@ defmodule Pinpointr.GameServer do
   end
 
   def handle_call(:get_state, _from, state) do
-    {:reply,
-     %{
-      id: state.id,
-      name: state.name,
-      players: HashDict.values(state.players),
-      game_state: state.game_state
-     },
-     state}
+    {:reply, get_room_state(state), state}
   end
 
   def handle_call({:add_player, name}, _from, state) do
@@ -58,11 +51,8 @@ defmodule Pinpointr.GameServer do
       player = %Player{name: name}
       new_state = %{state | players: HashDict.put(state.players, name, player)}
       if state.game_state == :waiting_for_players do
-        countdown = Countdown.start(10, :round_started)
-        new_state = %{new_state | game_state: :round_starting, countdown: countdown}
-        broadcast_to_room(state.id, 
-                  "gamestate:changed", 
-                  %{game_state: new_state.game_state, players: HashDict.values(new_state.players)})
+        new_state = %{new_state | game_state: :round_starting}
+        new_state = handle_game_state_changed(new_state.game_state, new_state)
       end
       {:reply, {:ok, player}, new_state}
     end
@@ -74,6 +64,7 @@ defmodule Pinpointr.GameServer do
 
     if HashDict.size(new_state.players) == 0 do
       new_state = %{new_state | game_state: :waiting_for_players}
+      new_state = handle_game_state_changed(new_state.game_state, new_state)
     end
 
     {:reply, player, new_state}
@@ -98,13 +89,22 @@ defmodule Pinpointr.GameServer do
       new_state = countdown_finished(next_gs, state)
       {:noreply, new_state}
     else
-      broadcast_to_room(state.id, "countdown", %{countdown: countdown})
+      broadcast_to_room(state.id, "game:countdown", %{countdown: countdown})
       {:noreply, state}
     end
   end
 
   # Private helper functions
   # --------------------------------------------------------------------------
+  defp get_room_state(state) do
+    %{
+      id: state.id,
+      name: state.name,
+      players: HashDict.values(state.players),
+      game_state: state.game_state
+    }
+  end
+
   defp broadcast_to_room(room_id, message, args) do
     Endpoint.broadcast!("rooms:" <> to_string(room_id), message, args)
   end
@@ -119,10 +119,33 @@ defmodule Pinpointr.GameServer do
     players = 
       for {n, p} <- state.players, into: HashDict.new, do: {n, %Player{p | ready: false}}
 
-    broadcast_to_room(state.id, 
-                      "gamestate:changed", 
-                      %{game_state: next_gs, players: HashDict.values(players)})
+    new_state = %{state | game_state: next_gs, players: players, countdown: nil}
+    handle_game_state_changed(next_gs, new_state)
+  end
 
-    %{state | game_state: next_gs, players: players, countdown: nil}
+  def handle_game_state_changed(new_gs, state) do
+    IO.puts "game state changed to #{new_gs}"
+    case new_gs do
+      :waiting_for_players ->
+        if state.countdown do
+          Countdown.stop(state.countdown)
+          %{state | countdown: nil}
+        else
+          state
+        end
+
+      :round_starting ->
+        broadcast_to_room(state.id,
+                          "game:roundStarting",
+                          %{game_state: state.game_state})
+        countdown = Countdown.start(10, :round_started)
+        %{state | countdown: countdown} 
+
+      :round_started ->
+        broadcast_to_room(state.id,
+                          "game:roundStarted",
+                          %{game_state: state.game_state, players: HashDict.values(state.players)})
+        state
+    end 
   end
 end

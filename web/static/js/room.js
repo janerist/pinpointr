@@ -42,8 +42,9 @@ let Room = React.createClass({
         channel.on("player:left", this.playerLeft);
         channel.on("player:updated", this.playerUpdated);
         channel.on("chat:message", this.refs.chat.addMessage);
-        channel.on("gamestate:changed", this.gameStateChanged);
-        channel.on("countdown", this.countdown);
+        channel.on("game:roundStarting", this.roundStarting);
+        channel.on("game:roundStarted", this.roundStarted);
+        channel.on("game:countdown", this.countdown);
       })
       .receive("error", response => {
         alert(response.reason);
@@ -80,7 +81,14 @@ let Room = React.createClass({
     });
   },
 
-  gameStateChanged({game_state, players}) {
+  roundStarting({game_state}) {
+    this.setState({
+      players: this.state.players,
+      gameState: game_state
+    });
+  },
+
+  roundStarted({game_state, players}) {
     this.setState({
       players: players,
       gameState: game_state
