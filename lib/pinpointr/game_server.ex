@@ -62,7 +62,7 @@ defmodule Pinpointr.GameServer do
         new_state = %{new_state | game_state: :round_starting, countdown: countdown}
         broadcast_to_room(state.id, 
                   "gamestate:changed", 
-                  %{game_state: new_state.game_state, players: new_state.players})
+                  %{game_state: new_state.game_state, players: HashDict.values(new_state.players)})
       end
       {:reply, {:ok, player}, new_state}
     end
@@ -121,7 +121,7 @@ defmodule Pinpointr.GameServer do
 
     broadcast_to_room(state.id, 
                       "gamestate:changed", 
-                      %{game_state: next_gs, players: players})
+                      %{game_state: next_gs, players: HashDict.values(players)})
 
     %{state | game_state: next_gs, players: players, countdown: nil}
   end
