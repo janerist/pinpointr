@@ -6,8 +6,8 @@ defmodule Pinpointr.GameServer do
 
   # Client API
   # --------------------------------------------------------------------------
-  def start_link(id, name, opts \\ []) do
-    GenServer.start_link(__MODULE__, {id, name}, opts)
+  def start_link(id, name, locs, opts \\ []) do
+    GenServer.start_link(__MODULE__, {id, name, locs}, opts)
   end
 
   def get_state(game) do
@@ -32,11 +32,13 @@ defmodule Pinpointr.GameServer do
 
   # Server callbacks
   # --------------------------------------------------------------------------
-  def init({id, name}) do
+  def init({id, name, locs}) do
     {:ok, %{id: id,
             name: name,
             players: HashDict.new,
             game_state: :waiting_for_players,
+            locs: locs,
+            current_loc: nil,
             countdown: nil}}
   end
 
@@ -80,13 +82,14 @@ defmodule Pinpointr.GameServer do
   # Messages
   # --------------------------------------------------------------------------
   def handle_info({:countdown, :finished, next_gs}, state) do
-    new_state = %{state | game_state: next_gs}
+    new_state = %{state | game_state: next_gs, countdown: nil}
     new_state = handle_game_state_changed(next_gs, new_state)
     {:noreply, new_state}
   end
   def handle_info({:countdown, countdown, next_gs}, state) do
     if all_players_ready?(state.players) do
-      new_state = %{state | game_state: next_gs}
+      Countdown.stop(state.countdown)
+      new_state = %{state | game_state: next_gs, countdown: nil}
       new_state = handle_game_state_changed(next_gs, new_state) 
       {:noreply, new_state}
     else
@@ -107,21 +110,46 @@ defmodule Pinpointr.GameServer do
   end
 
   def handle_game_state_changed(:round_starting, state) do
-    countdown = Countdown.start(10, :round_started)
+    players = set_all_players_not_ready(state.players)
     broadcast_to_room(state.id,
                       "game:roundStarting",
-                      %{game_state: state.game_state})
-    %{state | countdown: countdown} 
+                      %{game_state: state.game_state, 
+                        players: HashDict.values(players)})
+    %{state | 
+      countdown: Countdown.start(10, :round_started), 
+      players: players} 
   end
 
   def handle_game_state_changed(:round_started, state) do
-    players = 
-      for {n, p} <- state.players, into: HashDict.new, do: {n, %Player{p | ready: false}}
-    Countdown.stop(state.countdown)
+    players = set_all_players_not_ready(state.players)
+
+    :random.seed(:os.timestamp)
+    [next_loc | _] = Enum.shuffle(state.locs)
+
     broadcast_to_room(state.id,
                       "game:roundStarted",
-                      %{game_state: state.game_state, players: HashDict.values(players)})
-    %{state | players: players, countdown: nil}
+                      %{game_state: state.game_state, 
+                        players: HashDict.values(players),
+                        loc: next_loc.name})
+    %{state | 
+      countdown: Countdown.start(15, :round_finished), 
+      players: players, 
+      current_loc: next_loc}
+  end
+
+  def handle_game_state_changed(:round_finished, state) do
+    players = set_all_players_not_ready(state.players)
+
+    # TODO: calculate points, find winner
+
+    broadcast_to_room(state.id,
+                      "game:roundFinished",
+                      %{game_state: state.game_state, 
+                        players: HashDict.values(players)})
+
+    %{state | 
+      countdown: Countdown.start(10, :round_starting), 
+      players: players}
   end
 
   # Private helper functions
@@ -131,7 +159,8 @@ defmodule Pinpointr.GameServer do
       id: state.id,
       name: state.name,
       players: HashDict.values(state.players),
-      game_state: state.game_state
+      game_state: state.game_state,
+      current_loc: if state.current_loc do state.current_loc.name end 
     }
   end
 
@@ -144,4 +173,7 @@ defmodule Pinpointr.GameServer do
     |> Enum.all? fn player -> player.ready end
   end
 
+  defp set_all_players_not_ready(players) do
+    for {n, p} <- players, into: HashDict.new, do: {n, %Player{p | ready: false}}
+  end
 end

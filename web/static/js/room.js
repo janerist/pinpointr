@@ -38,12 +38,15 @@ let Room = React.createClass({
           gameState: roomState.game_state
         });
 
+        this.setStatusMessage(roomState.current_loc);
+
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
         channel.on("player:updated", this.playerUpdated);
         channel.on("chat:message", this.refs.chat.addMessage);
         channel.on("game:roundStarting", this.roundStarting);
         channel.on("game:roundStarted", this.roundStarted);
+        channel.on("game:roundFinished", this.roundFinished);
         channel.on("game:countdown", this.countdown);
       })
       .receive("error", response => {
@@ -81,22 +84,52 @@ let Room = React.createClass({
     });
   },
 
-  roundStarting({game_state}) {
+  roundStarting({game_state, players}) {
+    this.refs.countdownModal.setReady(false);
+
     this.setState({
-      players: this.state.players,
+      players: players, 
       gameState: game_state
     });
   },
 
-  roundStarted({game_state, players}) {
+  roundStarted({game_state, players, loc}) {
+    this.refs.countdownModal.setReady(false);
+    
     this.setState({
-      players: players,
+      players: players, 
+      gameState: game_state
+    });
+
+    this.setStatusMessage(loc);
+  },
+
+  roundFinished({game_state, players}) {
+    this.refs.countdownModal.setReady(false);
+
+    this.setState({
+      players: players, 
       gameState: game_state
     });
   },
 
   countdown({countdown}) {
-    this.refs.countdownModal.setCountdown(countdown);
+    switch (this.state.gameState) {
+      case "round_starting":
+      case "round_finished": 
+        this.refs.countdownModal.setCountdown(countdown);
+        break;
+
+      case "round_started":
+        this.refs.status.setCountdown(countdown);
+        break;
+    }
+  },
+
+  setStatusMessage(loc) {
+    if (loc) {
+      this.refs.status.setMessage(`Pinpoint "${loc}"`);
+    }
   },
 
   handleMessageSubmitted(message) {

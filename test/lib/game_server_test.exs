@@ -2,9 +2,10 @@ defmodule Pinpointr.GameServerTest do
   use ExUnit.Case
   alias Pinpointr.GameServer
   alias Pinpointr.Player
+  alias Pinpointr.Location
 
   setup do
-    {:ok, game} = GameServer.start_link(1, "TestRoom")
+    {:ok, game} = GameServer.start_link(1, "TestRoom", [%Location{name: "Test"}])
     {:ok, game: game}
   end
 
@@ -15,6 +16,7 @@ defmodule Pinpointr.GameServerTest do
     assert state.name == "TestRoom"
     assert state.players == []
     assert state.game_state == :waiting_for_players 
+    assert state.current_loc == nil
   end
 
   test "add_player/2 adds a player", %{game: game} do
@@ -28,15 +30,6 @@ defmodule Pinpointr.GameServerTest do
   test "add_player/2 checks if player exists", %{game: game} do
     GameServer.add_player(game, "p1")
     assert GameServer.add_player(game, "p1") == {:error, "Player name taken"}
-  end
-
-  test "add_player/2 triggers game state change", %{game: game} do
-    GameServer.add_player(game, "p1")
-    assert GameServer.get_state(game).game_state == :round_starting
-  end
-
-  test "add_player/2 triggers countdown", %{game: game} do
-    # TODO
   end
 
   test "remove_player/2 removes a player", %{game: game} do
@@ -55,13 +48,6 @@ defmodule Pinpointr.GameServerTest do
 
     assert player == nil
     assert length(state.players) == 1
-  end
-
-  test "remove_player/2 triggers game state change", %{game: game} do
-    GameServer.add_player(game, "p1")
-    GameServer.remove_player(game, "p1")
-
-    assert GameServer.get_state(game).game_state == :waiting_for_players
   end
 
   test "update player_fields/3 updates player fields", %{game: game} do

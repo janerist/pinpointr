@@ -24,8 +24,8 @@ let CountdownModal = React.createClass({
       ready: this.state.ready
     });
 
-    if (nextProps.gameState === "game_ended" 
-        || nextProps.gameState === "round_starting") {
+    if (nextProps.gameState === "round_starting" 
+        || nextProps.gameState === "round_finished") {
       this.open();
     } else {
       this.close();
@@ -52,11 +52,19 @@ let CountdownModal = React.createClass({
     switch (gameState) {
       case "round_starting":
         return "Next round is starting...";
-      case "game_ended":
-        return "Game ended. Starting new game...";
+      case "round_finished":
+        return "Round finished";
       default: 
         return "";
     }
+  },
+
+  setReady(ready) {
+    this.setState({
+      message: this.state.message,
+      countdown: this.state.countdown,
+      ready: ready 
+    });
   },
 
   toggleReady() {

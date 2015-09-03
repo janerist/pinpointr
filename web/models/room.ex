@@ -6,6 +6,8 @@ defmodule Pinpointr.Room do
     field :zxy, :string
 
     timestamps
+
+    has_many :locations, Pinpointr.Location
   end
 
   @required_fields ~w(name zxy)

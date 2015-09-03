@@ -11,8 +11,8 @@ defmodule Pinpointr.RoomRegistry do
     GenServer.call(server, {:lookup, room_id})
   end
 
-  def create(server, room_id, room_name) do
-    GenServer.call(server, {:create, room_id, room_name})
+  def create(server, room_id, room_name, locs) do
+    GenServer.call(server, {:create, room_id, room_name, locs})
   end
 
   # Server callbacks
@@ -24,11 +24,11 @@ defmodule Pinpointr.RoomRegistry do
     {:reply, HashDict.fetch(rooms, room_id), rooms}
   end
 
-  def handle_call({:create, room_id, room_name}, _from, rooms) do
+  def handle_call({:create, room_id, room_name, locs}, _from, rooms) do
     if HashDict.has_key?(rooms, room_id) do
       {:reply, HashDict.fetch(rooms, room_id), rooms}
     else
-      {:ok, game} = GameServer.start_link(room_id, room_name)
+      {:ok, game} = GameServer.start_link(room_id, room_name, locs)
       {:reply, game, HashDict.put(rooms, room_id, game)}
     end
   end
