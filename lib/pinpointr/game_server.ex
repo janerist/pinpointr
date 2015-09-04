@@ -89,9 +89,9 @@ defmodule Pinpointr.GameServer do
     points = Score.calculate(distance, time_used)
 
     players = HashDict.update! state.players, name, fn p -> 
-      %Player{points: p.points + points} 
+      %Player{p | points: p.points + points} 
     end
-    
+
     {:reply, 
       %{distance: distance, 
         time_used: time_used, 
