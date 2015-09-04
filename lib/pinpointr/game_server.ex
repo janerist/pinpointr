@@ -87,7 +87,16 @@ defmodule Pinpointr.GameServer do
     distance = Location.find_distance_from(state.current_loc, latlng)
     time_used = Countdown.time_since_start(state.countdown)
     points = Score.calculate(distance, time_used)
-    {:reply, %{distance: distance, time_used: time_used, points: points}, state}
+
+    players = HashDict.update! state.players, name, fn p -> 
+      %Player{points: p.points + points} 
+    end
+    
+    {:reply, 
+      %{distance: distance, 
+        time_used: time_used, 
+        points: points}, 
+      %{state | players: players}}
   end
 
   # Messages
