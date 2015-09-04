@@ -4,6 +4,7 @@ defmodule Pinpointr.GameServer do
   alias Pinpointr.Countdown
   alias Pinpointr.Endpoint
   alias Pinpointr.Location
+  alias Pinpointr.Score
 
   # Client API
   # --------------------------------------------------------------------------
@@ -84,7 +85,9 @@ defmodule Pinpointr.GameServer do
 
   def handle_call({:pinpoint, name, latlng}, _from, state) do
     distance = Location.find_distance_from(state.current_loc, latlng)
-    {:reply, %{distance: distance}, state}
+    time_used = Countdown.time_since_start(state.countdown)
+    points = Score.calculate(distance, time_used)
+    {:reply, %{distance: distance, time_used: time_used, points: points}, state}
   end
 
   # Messages
