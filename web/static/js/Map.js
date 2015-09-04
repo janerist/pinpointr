@@ -12,6 +12,12 @@ let Map = React.createClass({
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
+
+    this.map.on("dblclick", this.pinpoint);
+  },
+
+  pinpoint({latlng}) {
+    this.props.pinpointed([latlng.lat, latlng.lng]);
   },
 
   render() {

@@ -53,6 +53,14 @@ defmodule Pinpointr.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_in("player:pinpoint", %{"latlng" => [lat, lng]}, socket) do
+    game = get_game(socket.topic)
+    response = GameServer.pinpoint(game, socket.assigns[:name], lat, lng) 
+    broadcast!(socket, "player:pinpoint", %{response: response})
+    {:noreply, socket}
+  end
+  
+
   # Internal message handlers
   # --------------------------------------------------------------------------
   def handle_info({:after_join, game, player}, socket) do

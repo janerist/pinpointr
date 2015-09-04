@@ -30,6 +30,10 @@ defmodule Pinpointr.GameServer do
     update_player(game, name, fn player -> struct(player, fields) end)
   end
 
+  def pinpoint(game, name, lat, lng) do
+    GenServer.call(game, {:pinpoint, name, lat, lng})
+  end
+
   # Server callbacks
   # --------------------------------------------------------------------------
   def init({id, name, locs}) do
@@ -76,6 +80,12 @@ defmodule Pinpointr.GameServer do
     new_state = %{state | players: players}
     {:reply, player, new_state}
   end
+
+  def handle_call({:pinpoint, name, lat, lng}, _from, state) do
+    IO.puts "pinpoint from #{name}: #{lat}, #{lng}"
+    {:reply, :ok, state}
+  end
+  
 
   # Messages
   # --------------------------------------------------------------------------

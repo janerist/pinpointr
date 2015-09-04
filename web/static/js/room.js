@@ -43,6 +43,7 @@ let Room = React.createClass({
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
         channel.on("player:updated", this.playerUpdated);
+        channel.on("player:pinpoint", this.playerPinpointed);
         channel.on("chat:message", this.refs.chat.addMessage);
         channel.on("game:roundStarting", this.roundStarting);
         channel.on("game:roundStarted", this.roundStarted);
@@ -82,6 +83,10 @@ let Room = React.createClass({
       players: this.state.players.filter(p => p.name !== player.name).concat(player),
       gameState: this.state.gameState
     });
+  },
+
+  playerPinpointed(response) {
+    console.log(response);
   },
 
   roundStarting({game_state, players}) {
@@ -144,13 +149,17 @@ let Room = React.createClass({
     this.channel.push("player:ready", {ready: ready})
   },
 
+  handlePinpoint(latlng) {
+    this.channel.push("player:pinpoint", {latlng: latlng})
+  },
+
   render() {
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="col-lg-9">
             <StatusArea ref="status" />
-            <Map zxy={this.props.zxy} />
+            <Map zxy={this.props.zxy} pinpointed={this.handlePinpoint} />
           </div>
           <div className="col-lg-3">
             <Chat ref="chat" messageSubmitted={this.handleMessageSubmitted} />
