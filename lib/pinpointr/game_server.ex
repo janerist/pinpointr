@@ -3,6 +3,7 @@ defmodule Pinpointr.GameServer do
   alias Pinpointr.Player
   alias Pinpointr.Countdown
   alias Pinpointr.Endpoint
+  alias Pinpointr.Location
 
   # Client API
   # --------------------------------------------------------------------------
@@ -30,8 +31,8 @@ defmodule Pinpointr.GameServer do
     update_player(game, name, fn player -> struct(player, fields) end)
   end
 
-  def pinpoint(game, name, lat, lng) do
-    GenServer.call(game, {:pinpoint, name, lat, lng})
+  def pinpoint(game, name, latlng) do
+    GenServer.call(game, {:pinpoint, name, latlng})
   end
 
   # Server callbacks
@@ -81,11 +82,10 @@ defmodule Pinpointr.GameServer do
     {:reply, player, new_state}
   end
 
-  def handle_call({:pinpoint, name, lat, lng}, _from, state) do
-    IO.puts "pinpoint from #{name}: #{lat}, #{lng}"
-    {:reply, :ok, state}
+  def handle_call({:pinpoint, name, latlng}, _from, state) do
+    distance = Location.find_distance_from(state.current_loc, latlng)
+    {:reply, %{distance: distance}, state}
   end
-  
 
   # Messages
   # --------------------------------------------------------------------------
