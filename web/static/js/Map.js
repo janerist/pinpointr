@@ -4,16 +4,22 @@ let Map = React.createClass({
   mixins: [SetFullHeightMixin],
   
   componentDidMount() {
-    let [z, x, y] = this.props.zxy.split("/");
     this.map = L.map("map", {
       doubleClickZoom: false
-    }).setView([x, y], z);
+    });
+
+    this.resetView();
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
     this.map.on("dblclick", this.pinpoint);
+  },
+
+  resetView() {
+    let [z, x, y] = this.props.zxy.split("/");
+    this.map.setView([x, y], z);
   },
 
   pinpoint({latlng}) {

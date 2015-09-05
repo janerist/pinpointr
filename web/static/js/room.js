@@ -85,8 +85,13 @@ let Room = React.createClass({
     });
   },
 
-  playerPinpointed(response) {
-    console.log(response);
+  playerPinpointed({player}) {
+    this.playerUpdated({player: player});
+
+    this.refs.chat.addMessage({
+      message: `${player.name} pinpointed ${Math.round(player.round_distance)} meters 
+        from the target and scored ${player.round_points} points.`
+    });
   },
 
   roundStarting({game_state, players}) {
@@ -96,6 +101,8 @@ let Room = React.createClass({
       players: players, 
       gameState: game_state
     });
+
+    this.refs.map.resetView();
   },
 
   roundStarted({game_state, players, loc}) {
@@ -159,7 +166,7 @@ let Room = React.createClass({
         <div className="row">
           <div className="col-lg-9">
             <StatusArea ref="status" />
-            <Map zxy={this.props.zxy} pinpointed={this.handlePinpoint} />
+            <Map ref="map" zxy={this.props.zxy} pinpointed={this.handlePinpoint} />
           </div>
           <div className="col-lg-3">
             <Chat ref="chat" messageSubmitted={this.handleMessageSubmitted} />

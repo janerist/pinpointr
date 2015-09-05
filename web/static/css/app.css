@@ -32,3 +32,8 @@ html {
 #map {
   cursor: crosshair !important;
 }
+
+.roundPoints {
+  color: green;
+  font-weight: bold;
+}
