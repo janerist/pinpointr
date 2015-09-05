@@ -18,15 +18,16 @@ html {
   table-layout: fixed;
 }
 
-.countdown .badge {
-  font-size: 155%;
-  width: 50px;
-  padding: 5px;
+.gameStateMessage {
+  font-weight: bold;
 }
 
-.gameStateMessage {
-  font-size: 155%;
-  padding: 5px;
+.statusArea {
+  padding: 5px 0;
+}
+
+.statusMessage {
+  font-weight: bold;
 }
 
 #map {
