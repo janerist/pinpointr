@@ -38,6 +38,7 @@ let NameInputModal = React.createClass({
                 type="text"
                 className="form-control"
                 ref="nameInput"
+                maxlength="20"
                 onKeyUp={this.handleKeyUp}
                 onChange={this.handleChange} />
             </div>

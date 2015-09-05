@@ -53,15 +53,20 @@ defmodule Pinpointr.GameServer do
   end
 
   def handle_call({:add_player, name}, _from, state) do
-    if HashDict.has_key?(state.players, name) do
-      {:reply, {:error, "Player name taken"}, state}
-    else
-      player = %Player{name: name}
-      new_state = %{state | players: HashDict.put(state.players, name, player)}
-      if state.game_state == :waiting_for_players do
-        new_state = change_gs(:round_starting, new_state)
-      end
-      {:reply, {:ok, player}, new_state}
+    cond do
+      String.length(name) > 20 ->
+        {:reply, {:error, :name_too_long}, state}
+
+      HashDict.has_key?(state.players, name)  ->
+        {:reply, {:error, :name_taken}, state}
+
+      true ->
+        player = %Player{name: name}
+        new_state = %{state | players: HashDict.put(state.players, name, player)}
+        if state.game_state == :waiting_for_players do
+          new_state = change_gs(:round_starting, new_state)
+        end
+        {:reply, {:ok, player}, new_state}
     end
   end
 

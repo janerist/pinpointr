@@ -29,7 +29,12 @@ defmodule Pinpointr.GameServerTest do
 
   test "add_player/2 checks if player exists", %{game: game} do
     GameServer.add_player(game, "p1")
-    assert GameServer.add_player(game, "p1") == {:error, "Player name taken"}
+    assert GameServer.add_player(game, "p1") == {:error, :name_taken}
+  end
+
+  test "add_player/2 checks if name is too long", %{game: game} do
+    assert GameServer.add_player(game, "jjgwkgjrellgkjerlgkjeklrgjelrkgj") == 
+      {:error, :name_too_long} 
   end
 
   test "remove_player/2 removes a player", %{game: game} do

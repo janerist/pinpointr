@@ -19,8 +19,11 @@ defmodule Pinpointr.RoomChannel do
         send(self, {:after_join, game, player})
         {:ok, GameServer.get_state(game), assign(socket, :name, name)}
 
-      {:error, "Player name taken"} ->
+      {:error, :name_taken} ->
         {:error, %{"reason" => "Name is taken. Please choose another one."}}
+
+      {:error, :name_too_long} ->
+        {:error, %{"reason" => "Name is too long. Max 20 characters please."}}
     end
   end
 
