@@ -56,6 +56,7 @@ defmodule Pinpointr.RoomChannel do
   def handle_in("player:pinpoint", %{"latlng" => [lat, lng]}, socket) do
     game = get_game(socket.topic)
     case GameServer.pinpoint(game, socket.assigns[:name], {lat, lng}) do
+      :invalid -> nil
       :already_pinpointed -> nil
       response -> broadcast!(socket, "player:pinpoint", response)
     end

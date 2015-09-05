@@ -84,23 +84,27 @@ defmodule Pinpointr.GameServer do
   end
 
   def handle_call({:pinpoint, name, latlng}, _from, state) do
-    if HashDict.get(state.players, name).round_points do
-      # Already pinpointed
-      {:reply, :already_pinpointed, state}
-    else
-      distance = Location.find_distance_from(state.current_loc, latlng)
-      time_used = Countdown.time_since_start(state.countdown)
-      points = Score.calculate(distance, time_used)
+    cond do
+      state.game_state != :round_started ->
+        {:reply, :invalid, state}
+      
+      HashDict.get(state.players, name).round_points ->
+        {:reply, :already_pinpointed, state}
 
-      players = HashDict.update! state.players, name, fn p -> 
-        %Player{p | 
+      true -> 
+        distance = Location.find_distance_from(state.current_loc, latlng)
+        time_used = Countdown.time_since_start(state.countdown)
+        points = Score.calculate(distance, time_used)
+
+        players = HashDict.update! state.players, name, fn p -> 
+          %Player{p | 
           round_distance: distance,
           round_time: time_used,
           round_points: points,
           points: p.points + points}
-      end
+        end
 
-      {:reply, %{player: HashDict.get(players, name)}, %{state | players: players}}
+        {:reply, %{player: HashDict.get(players, name)}, %{state | players: players}}
     end
   end
 
