@@ -104,6 +104,7 @@ let Room = React.createClass({
 
     this.refs.map.resetView();
     this.refs.status.setMessage("");
+    this.refs.status.setCountdown(null);
   },
 
   roundStarted({game_state, players, loc}) {
@@ -126,6 +127,7 @@ let Room = React.createClass({
     });
 
     this.refs.status.setMessage("");
+    this.refs.status.setCountdown(null);
   },
 
   countdown({countdown}) {

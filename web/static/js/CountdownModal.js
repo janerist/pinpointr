@@ -102,15 +102,15 @@ let CountdownModal = React.createClass({
             <div className="modal-header">
               <div className="container-fluid">
                 <div className="row">
-                  <div className="col-md-4">
+                  <div className="col-md-2">
                     <span className="badge badge-default">
                       {this.state.countdown}
                     </span>
                   </div>
-                  <div className="col-md-4 text-center">
+                  <div className="col-md-8 text-center">
                     <div className="gameStateMessage">{this.state.message}</div>
                   </div>
-                  <div className="col-md-4 text-right">
+                  <div className="col-md-2 text-right">
                     <span className="badge badge-default">
                       {this.state.countdown}
                     </span>

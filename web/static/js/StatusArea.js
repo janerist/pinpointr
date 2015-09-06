@@ -23,17 +23,17 @@ let StatusArea = React.createClass({
   render() {
     return (
       <div className="row statusArea">
-        <div className="col-md-4">
+        <div className="col-md-2">
           <span className="badge badge-default">
             {this.state.countdown}
           </span>
         </div>
-        <div className="col-md-4 text-center">
+        <div className="col-md-8 text-center">
           <div className="statusMessage">
             {this.state.message}
           </div>
         </div>
-        <div className="col-md-4 text-right">
+        <div className="col-md-2 text-right">
           <span className="badge badge-default">
             {this.state.countdown}
           </span>
