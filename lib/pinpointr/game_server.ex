@@ -75,7 +75,7 @@ defmodule Pinpointr.GameServer do
     new_state = %{state | players: HashDict.delete(state.players, name)}
 
     if HashDict.size(new_state.players) == 0 do
-      new_state = change_gs(:waiting_for_players, new_state) 
+      new_state = change_gs(:waiting_for_players, new_state)
     end
 
     {:reply, player, new_state}
@@ -92,17 +92,17 @@ defmodule Pinpointr.GameServer do
     cond do
       state.game_state != :round_started ->
         {:reply, :invalid, state}
-      
+
       HashDict.get(state.players, name).round_points ->
         {:reply, :already_pinpointed, state}
 
-      true -> 
+      true ->
         distance = Location.find_distance_from(state.current_loc, latlng)
         time_used = Countdown.time_since_start(state.countdown)
         points = Score.calculate(distance, time_used)
 
-        players = HashDict.update! state.players, name, fn p -> 
-          %Player{p | 
+        players = HashDict.update! state.players, name, fn p ->
+          %Player{p |
           round_distance: distance,
           round_time: time_used,
           round_points: points,
@@ -137,21 +137,21 @@ defmodule Pinpointr.GameServer do
   defp handle_gs_changed(:waiting_for_players, state) do
     if state.countdown do
       Countdown.stop(state.countdown)
-      %{state | countdown: nil}
+      %{state | countdown: nil, current_loc: nil}
     else
       state
     end
   end
 
   defp handle_gs_changed(:round_starting, state) do
-    players = reset_players_for_round(state.players) 
+    players = reset_players_for_round(state.players)
     broadcast_to_room(state.id,
                       "game:roundStarting",
-                      %{game_state: state.game_state, 
+                      %{game_state: state.game_state,
                         players: HashDict.values(players)})
-    %{state | 
-      countdown: Countdown.start(10, :round_started), 
-      players: players} 
+    %{state |
+      countdown: Countdown.start(10, :round_started),
+      players: players}
   end
 
   defp handle_gs_changed(:round_started, state) do
@@ -161,27 +161,24 @@ defmodule Pinpointr.GameServer do
 
     broadcast_to_room(state.id,
                       "game:roundStarted",
-                      %{game_state: state.game_state, 
+                      %{game_state: state.game_state,
                         players: HashDict.values(players),
                         loc: next_loc.name})
-    %{state | 
-      countdown: Countdown.start(15, :round_finished), 
+    %{state |
+      countdown: Countdown.start(15, :round_finished),
       players: players,
       current_loc: next_loc}
   end
 
   defp handle_gs_changed(:round_finished, state) do
     players = set_all_players_not_ready(state.players)
-
-    # TODO: calculate points, find winner
-
     broadcast_to_room(state.id,
                       "game:roundFinished",
-                      %{game_state: state.game_state, 
+                      %{game_state: state.game_state,
                         players: HashDict.values(players)})
 
-    %{state | 
-      countdown: Countdown.start(10, :round_starting), 
+    %{state |
+      countdown: Countdown.start(10, :round_starting),
       players: players}
   end
 
@@ -211,9 +208,9 @@ defmodule Pinpointr.GameServer do
   end
 
   defp reset_players_for_round(players) do
-    for {n, p} <- players, 
-      into: HashDict.new, 
-      do: {n, %Player{p | 
+    for {n, p} <- players,
+      into: HashDict.new,
+      do: {n, %Player{p |
                       ready: false,
                       round_distance: nil,
                       round_time: nil,
