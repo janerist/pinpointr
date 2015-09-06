@@ -2,6 +2,7 @@ defmodule Pinpointr.UserSocket do
   use Phoenix.Socket
 
   ## Channels
+  channel "lobby", Pinpointr.LobbyChannel
   channel "rooms:*", Pinpointr.RoomChannel
 
   ## Transports

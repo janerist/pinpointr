@@ -62,7 +62,7 @@ let RoomList = React.createClass({
   componentDidMount() {
     let socket = new Socket("/socket");
     socket.connect();
-    let channel = socket.channel("rooms:lobby");
+    let channel = socket.channel("lobby");
     channel.join()
       .receive("ok", response => {
         this.setState(response);

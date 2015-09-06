@@ -1,17 +1,12 @@
 defmodule Pinpointr.RoomChannel do
   use Pinpointr.Web, :channel
 
-  alias Pinpointr.Repo
-  alias Pinpointr.Room
+  alias Pinpointr.RoomRegistry
   alias Pinpointr.GameServer
-  alias Phoenix.Socket
   alias Pinpointr.Endpoint
 
   # Join
   # --------------------------------------------------------------------------
-  def join("rooms:lobby", _auth_msg, socket) do
-    {:ok, %{rooms: get_room_list}, socket}
-  end
   def join("rooms:" <> _room_id, %{"name" => name}, socket) do
     game = get_game(socket.topic)
     case GameServer.add_player(game, name) do
@@ -29,9 +24,6 @@ defmodule Pinpointr.RoomChannel do
 
   # Terminate
   # --------------------------------------------------------------------------
-  def terminate(_reason, %Socket{topic: "rooms:lobby"}) do
-   # Do nothing when leaving the lobby
-  end
   def terminate(_reason, socket) do
     game = get_game(socket.topic)
     player = GameServer.remove_player(game, socket.assigns[:name])
@@ -84,15 +76,8 @@ defmodule Pinpointr.RoomChannel do
   end
 
   defp get_game("rooms:" <> room_id) do
-    {:ok, game} = Pinpointr.RoomRegistry.lookup(Pinpointr.RoomRegistry,
-                                                String.to_integer(room_id))
+    {:ok, game} = RoomRegistry.lookup(Pinpointr.RoomRegistry,
+                                      String.to_integer(room_id))
     game
-  end
-
-  defp get_room_list do
-    Repo.all(Room) 
-    |> Enum.map(fn room -> "rooms:" <> to_string(room.id) end)
-    |> Enum.map(&get_game/1)
-    |> Enum.map(&GameServer.get_state/1)
   end
 end
