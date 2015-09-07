@@ -18,6 +18,17 @@ let CountdownModal = React.createClass({
       keyboard: false,
       show: false
     });
+
+    window.addEventListener("resize", this.resizeModalBody);
+    this.resizeModalBody();
+  },
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeModalBody);
+  },
+
+  resizeModalBody() {
+    $(".modal-body", ".countdownModal").height($(window).height() * 0.5);
   },
 
   componentWillReceiveProps(nextProps) {
@@ -90,7 +101,7 @@ let CountdownModal = React.createClass({
 
   render() {
     let btnText = this.state.ready ? "Not ready" : "Ready";
-    var btnClasses = "btn";
+    var btnClasses = "btn btn-block";
     if (this.state.ready) {
       btnClasses += " btn-danger";
     } else {
@@ -108,14 +119,14 @@ let CountdownModal = React.createClass({
     } 
 
     return (
-      <div className="modal fade" tabIndex="-1" role="dialog">
+      <div className="countdownModal modal fade" tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-lg" role="document">
           <div className="modal-content">
             <div className="modal-header">
               <div className="container-fluid">
                 <div className="row">
                   <div className="col-md-2">
-                    <span className="badge badge-default">
+                    <span className="countdown badge badge-default">
                       {this.state.countdown}
                     </span>
                   </div>
@@ -123,7 +134,7 @@ let CountdownModal = React.createClass({
                     <div className="gameStateMessage">{this.state.message}</div>
                   </div>
                   <div className="col-md-2 text-right">
-                    <span className="badge badge-default">
+                    <span className="countdown badge badge-default">
                       {this.state.countdown}
                     </span>
                   </div>

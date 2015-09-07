@@ -26,7 +26,7 @@ let StatusArea = React.createClass({
         <div className="container-fluid">
           <div className="row statusArea">
             <div className="col-md-2">
-              <span className="badge badge-default">
+              <span className="countdown badge badge-default">
                 {this.state.countdown}
               </span>
             </div>
@@ -36,7 +36,7 @@ let StatusArea = React.createClass({
               </div>
             </div>
             <div className="col-md-2 text-right">
-              <span className="badge badge-default">
+              <span className="countdown badge badge-default">
                 {this.state.countdown}
               </span>
             </div>
