@@ -137,10 +137,8 @@ defmodule Pinpointr.GameServer do
   defp handle_gs_changed(:waiting_for_players, state) do
     if state.countdown do
       Countdown.stop(state.countdown)
-      %{state | countdown: nil, current_loc: nil}
-    else
-      state
     end
+    %{state | countdown: nil, current_loc: nil}
   end
 
   defp handle_gs_changed(:round_starting, state) do
