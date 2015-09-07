@@ -64,7 +64,7 @@ defmodule Pinpointr.GameServer do
         player = %Player{name: name}
         new_state = %{state | players: HashDict.put(state.players, name, player)}
         if state.game_state == :waiting_for_players do
-          new_state = change_gs(:round_starting, new_state)
+          new_state = change_gs(:game_starting, new_state)
         end
         {:reply, {:ok, player}, new_state}
     end
@@ -141,6 +141,18 @@ defmodule Pinpointr.GameServer do
     %{state | countdown: nil, current_loc: nil}
   end
 
+  defp handle_gs_changed(:game_starting, state) do
+    players = reset_players_for_game(state.players)
+    broadcast_to_room(state.id,
+                      "game:gameStarting",
+                      %{game_state: state.game_state,
+                        players: HashDict.values(players)})
+
+    %{state | 
+      countdown: Countdown.start(10, :round_starting),
+      players: players}
+  end
+
   defp handle_gs_changed(:round_starting, state) do
     players = reset_players_for_round(state.players)
     broadcast_to_room(state.id,
@@ -177,7 +189,8 @@ defmodule Pinpointr.GameServer do
 
     %{state |
       countdown: Countdown.start(10, :round_starting),
-      players: players}
+      players: players,
+      current_loc: nil}
   end
 
   # Private helper functions
@@ -213,5 +226,11 @@ defmodule Pinpointr.GameServer do
                       round_distance: nil,
                       round_time: nil,
                       round_points: nil}}
+  end
+
+  defp reset_players_for_game(players) do
+    for {n, p} <- players,
+      into: HashDict.new,
+      do: {n, %Player{p | ready: false, points: 0}}
   end
 end

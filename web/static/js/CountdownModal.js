@@ -1,4 +1,4 @@
-import {RoundStartingScoreboard, RoundFinishedScoreboard} from "./Scoreboard";
+import {GameStartingScoreboard, RoundStartingScoreboard, RoundFinishedScoreboard} from "./Scoreboard";
 
 let CountdownModal = React.createClass({
   getInitialState() {
@@ -24,7 +24,8 @@ let CountdownModal = React.createClass({
       ready: this.state.ready
     });
 
-    if (nextProps.gameState === "round_starting" 
+    if (nextProps.gameState === "game_starting" 
+        || nextProps.gameState === "round_starting" 
         || nextProps.gameState === "round_finished") {
       this.open();
     } else {
@@ -50,6 +51,8 @@ let CountdownModal = React.createClass({
 
   getGameStateMessage(gameState) {
     switch (gameState) {
+      case "game_starting":
+        return "New game is starting...";
       case "round_starting":
         return "Next round is starting...";
       case "round_finished":
@@ -89,7 +92,9 @@ let CountdownModal = React.createClass({
     }
 
     var scoreboard;
-    if (this.props.gameState === "round_starting") {
+    if (this.props.gameState === "game_starting") {
+      scoreboard = <GameStartingScoreboard players={this.props.players} />;
+    } else if (this.props.gameState === "round_starting") {
       scoreboard = <RoundStartingScoreboard players={this.props.players} />;
     } else if (this.props.gameState === "round_finished") {
       scoreboard = <RoundFinishedScoreboard players={this.props.players} />;

@@ -45,6 +45,7 @@ let Room = React.createClass({
         channel.on("player:updated", this.playerUpdated);
         channel.on("player:pinpoint", this.playerPinpointed);
         channel.on("chat:message", this.refs.chat.addMessage);
+        channel.on("game:gameStarting", this.gameStarting);
         channel.on("game:roundStarting", this.roundStarting);
         channel.on("game:roundStarted", this.roundStarted);
         channel.on("game:roundFinished", this.roundFinished);
@@ -94,6 +95,13 @@ let Room = React.createClass({
     });
   },
 
+  gameStarting({game_state, players}) {
+    this.setState({
+      players: players,
+      gameState: game_state
+    });
+  },
+
   roundStarting({game_state, players}) {
     this.refs.countdownModal.setReady(false);
 
@@ -132,6 +140,7 @@ let Room = React.createClass({
 
   countdown({countdown}) {
     switch (this.state.gameState) {
+      case "game_starting":
       case "round_starting":
       case "round_finished": 
         this.refs.countdownModal.setCountdown(countdown);
