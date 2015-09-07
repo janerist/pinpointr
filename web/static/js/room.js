@@ -49,6 +49,7 @@ let Room = React.createClass({
         channel.on("game:roundStarting", this.roundStarting);
         channel.on("game:roundStarted", this.roundStarted);
         channel.on("game:roundFinished", this.roundFinished);
+        channel.on("game:gameEnded", this.gameEnded);
         channel.on("game:countdown", this.countdown);
       })
       .receive("error", response => {
@@ -96,6 +97,8 @@ let Room = React.createClass({
   },
 
   gameStarting({game_state, players}) {
+    this.refs.countdownModal.setReady(false);
+
     this.setState({
       players: players,
       gameState: game_state
@@ -138,11 +141,21 @@ let Room = React.createClass({
     this.refs.status.setCountdown(null);
   },
 
+  gameEnded({game_state, players}) {
+    this.refs.countdownModal.setReady(false);
+
+    this.setState({
+      players: players, 
+      gameState: game_state
+    });
+  },
+
   countdown({countdown}) {
     switch (this.state.gameState) {
       case "game_starting":
       case "round_starting":
       case "round_finished": 
+      case "game_ended":
         this.refs.countdownModal.setCountdown(countdown);
         break;
 

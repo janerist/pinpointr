@@ -1,6 +1,5 @@
 defmodule Pinpointr do
   use Application
-  import Ecto.Query, only: [from: 2]
 
   @registry_name Pinpointr.RoomRegistry
 
@@ -27,9 +26,9 @@ defmodule Pinpointr do
     # Pull rooms out of the database. We have use start_child
     # since we have to wait for the Repo to start.
     # Each room starts a child worker "Pinpointr.RoomState"
-    rooms = Pinpointr.Repo.all(from room in Pinpointr.Room, preload: [:locations])
+    rooms = Pinpointr.Repo.all(Pinpointr.Room)
     Enum.map rooms, fn room ->
-      Pinpointr.RoomRegistry.create(@registry_name, room.id, room.name, room.locations)
+      Pinpointr.RoomRegistry.create(@registry_name, room.id, room.name)
     end
 
     {:ok, supervisor}

@@ -8,8 +8,8 @@ defmodule Pinpointr.GameServer do
 
   # Client API
   # --------------------------------------------------------------------------
-  def start_link(id, name, locs, opts \\ []) do
-    GenServer.start_link(__MODULE__, {id, name, locs}, opts)
+  def start_link(id, name, opts \\ []) do
+    GenServer.start_link(__MODULE__, {id, name}, opts)
   end
 
   def get_state(game) do
@@ -38,10 +38,10 @@ defmodule Pinpointr.GameServer do
 
   # Server callbacks
   # --------------------------------------------------------------------------
-  def init({id, name, locs}) do
+  def init({id, name}) do
     {:ok, %{id: id,
             name: name,
-            locs: locs,
+            locs: [],
             players: HashDict.new,
             game_state: :waiting_for_players,
             current_loc: nil,
@@ -143,6 +143,7 @@ defmodule Pinpointr.GameServer do
 
   defp handle_gs_changed(:game_starting, state) do
     players = reset_players_for_game(state.players)
+    locs = Location.get_locs(state.id)
     broadcast_to_room(state.id,
                       "game:gameStarting",
                       %{game_state: state.game_state,
@@ -150,6 +151,7 @@ defmodule Pinpointr.GameServer do
 
     %{state | 
       countdown: Countdown.start(10, :round_starting),
+      locs: locs,
       players: players}
   end
 
@@ -167,7 +169,7 @@ defmodule Pinpointr.GameServer do
   defp handle_gs_changed(:round_started, state) do
     players = set_all_players_not_ready(state.players)
     :random.seed(:os.timestamp)
-    [next_loc | _] = Enum.shuffle(state.locs)
+    [next_loc | locs] = Enum.shuffle(state.locs)
 
     broadcast_to_room(state.id,
                       "game:roundStarted",
@@ -177,6 +179,7 @@ defmodule Pinpointr.GameServer do
     %{state |
       countdown: Countdown.start(15, :round_finished),
       players: players,
+      locs: locs,
       current_loc: next_loc}
   end
 
@@ -187,10 +190,27 @@ defmodule Pinpointr.GameServer do
                       %{game_state: state.game_state,
                         players: HashDict.values(players)})
 
+    next_gs = case length(state.locs) do
+      0 -> :game_ended
+      _ -> :round_starting
+    end
+
     %{state |
-      countdown: Countdown.start(10, :round_starting),
+      countdown: Countdown.start(10, next_gs),
       players: players,
       current_loc: nil}
+  end
+
+  defp handle_gs_changed(:game_ended, state) do
+    players = set_all_players_not_ready(state.players)
+    broadcast_to_room(state.id,
+                      "game:gameEnded",
+                      %{game_state: state.game_state,
+                        players: HashDict.values(players)}) 
+
+    %{state | 
+      countdown: Countdown.start(15, :game_starting), 
+      players: players}
   end
 
   # Private helper functions

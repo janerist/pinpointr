@@ -1,5 +1,6 @@
 defmodule Pinpointr.Location do
   use Pinpointr.Web, :model
+  import Ecto.Query, only: [from: 2]
 
   schema "locations" do
     field :name, :string
@@ -22,6 +23,10 @@ defmodule Pinpointr.Location do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+
+  def get_locs(room_id) do
+    Pinpointr.Repo.all(from l in Pinpointr.Location, where: l.room_id == ^room_id)
   end
 
   def find_distance_from(location, {lat2, lng2}) do
