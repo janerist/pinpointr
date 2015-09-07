@@ -23,6 +23,12 @@
         "dist/css/bootstrap.css",
         "dist/js/bootstrap.js"
       ]
+    },
+    "leaflet": {
+      "main": [
+        "dist/leaflet.css",
+        "dist/leaflet-src.js"
+      ]
     }
   }
 }

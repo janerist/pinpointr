@@ -90,7 +90,7 @@ let Room = React.createClass({
 
     this.refs.chat.addMessage({
       message: `${player.name} pinpointed ${Math.round(player.round_distance)} meters 
-        from the target and scored ${player.round_points} points.`
+        from the target.`
     });
   },
 
