@@ -70,7 +70,7 @@ defmodule Pinpointr.RoomChannel do
   # Private helper functions
   # --------------------------------------------------------------------------
   defp broadcast_room_updated_to_lobby(game) do
-    Endpoint.broadcast!("rooms:lobby", 
+    Endpoint.broadcast!("lobby", 
                         "room:updated", 
                         %{room: GameServer.get_state(game)})
   end
