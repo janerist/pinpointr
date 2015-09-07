@@ -5,7 +5,7 @@ defmodule Pinpointr.GameServerTest do
   alias Pinpointr.Location
 
   setup do
-    {:ok, game} = GameServer.start_link(1, "TestRoom", [%Location{name: "Test"}])
+    {:ok, game} = GameServer.start_link(1, "TestRoom")
     {:ok, game: game}
   end
 
