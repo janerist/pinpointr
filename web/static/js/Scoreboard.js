@@ -32,6 +32,9 @@ export let RoundStartingScoreboard = React.createClass({
     return players.sort(function(p1, p2) {
       if (p1.points < p2.points) return 1;
       if (p1.points > p2.points) return -1;
+
+      if (p1.name < p1.name) return -1;
+      if (p1.name > p2.name) return 1;
       return 0;
     });
   },
@@ -77,8 +80,14 @@ export let RoundFinishedScoreboard = React.createClass({
       if (p1dist < p2dist) return -1;
       if (p1dist > p2dist) return 1;
 
+      if (p1.points < p2.points) return 1;
+      if (p1.points > p2.points) return -1;
+
+      if (p1.name < p1.name) return -1;
+      if (p1.name > p2.name) return 1;
+
       return 0;
-    })
+    });
   },
 
   render() {
