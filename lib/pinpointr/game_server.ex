@@ -44,6 +44,7 @@ defmodule Pinpointr.GameServer do
             locs: [],
             players: HashDict.new,
             game_state: :waiting_for_players,
+            num_rounds: nil,
             current_loc: nil,
             countdown: nil}}
   end
@@ -144,43 +145,49 @@ defmodule Pinpointr.GameServer do
   defp handle_gs_changed(:game_starting, state) do
     players = reset_players_for_game(state.players)
     locs = Location.get_locs(state.id)
+    num_rounds = length(locs)
     broadcast_to_room(state.id,
                       "game:gameStarting",
                       %{game_state: state.game_state,
+                        num_rounds: num_rounds,
                         players: HashDict.values(players)})
 
     %{state | 
       countdown: Countdown.start(10, :round_starting),
       locs: locs,
+      num_rounds: num_rounds,
       players: players}
   end
 
   defp handle_gs_changed(:round_starting, state) do
     players = reset_players_for_round(state.players)
+
+    :random.seed(:os.timestamp)
+    [next_loc | locs] = Enum.shuffle(state.locs)
+
     broadcast_to_room(state.id,
                       "game:roundStarting",
                       %{game_state: state.game_state,
+                        round: state.num_rounds - length(locs), 
                         players: HashDict.values(players)})
     %{state |
       countdown: Countdown.start(10, :round_started),
+      locs: locs,
+      current_loc: next_loc,
       players: players}
   end
 
   defp handle_gs_changed(:round_started, state) do
     players = set_all_players_not_ready(state.players)
-    :random.seed(:os.timestamp)
-    [next_loc | locs] = Enum.shuffle(state.locs)
 
     broadcast_to_room(state.id,
                       "game:roundStarted",
                       %{game_state: state.game_state,
                         players: HashDict.values(players),
-                        loc: next_loc.name})
+                        loc: state.current_loc.name})
     %{state |
       countdown: Countdown.start(15, :round_finished),
-      players: players,
-      locs: locs,
-      current_loc: next_loc}
+      players: players}
   end
 
   defp handle_gs_changed(:round_finished, state) do
@@ -221,6 +228,8 @@ defmodule Pinpointr.GameServer do
       name: state.name,
       players: HashDict.values(state.players),
       game_state: state.game_state,
+      num_rounds: state.num_rounds,
+      round: if state.num_rounds do state.num_rounds - length(state.locs) end,
       current_loc: if state.current_loc do state.current_loc.name end 
     }
   end

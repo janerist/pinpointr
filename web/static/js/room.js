@@ -10,7 +10,9 @@ let Room = React.createClass({
   getInitialState() {
     return { 
       players: [],
-      gameState: "waiting_for_players"
+      gameState: "waiting_for_players",
+      numRounds: null,
+      round: null
     };
   },
 
@@ -35,7 +37,9 @@ let Room = React.createClass({
         this.channel = channel;
         this.setState({
           players: roomState.players,
-          gameState: roomState.game_state
+          gameState: roomState.game_state,
+          numRounds: roomState.num_rounds,
+          round: roomState.round
         });
 
         this.setStatusMessage(roomState.current_loc);
@@ -61,7 +65,9 @@ let Room = React.createClass({
   playerJoined({player}) {
     this.setState({
       players: this.state.players.filter(p => p.name !== player.name).concat(player),
-      gameState: this.state.gameState
+      gameState: this.state.gameState,
+      numRounds: this.state.numRounds,
+      round: this.state.round
     });
 
     this.refs.chat.addMessage({
@@ -72,7 +78,9 @@ let Room = React.createClass({
   playerLeft({player}) {
     this.setState({
       players: this.state.players.filter(p => p.name !== player.name),
-      gameState: this.state.gameState
+      gameState: this.state.gameState,
+      numRounds: this.state.numRounds,
+      round: this.state.round
     });
 
     this.refs.chat.addMessage({
@@ -83,7 +91,9 @@ let Room = React.createClass({
   playerUpdated({player}) {
     this.setState({
       players: this.state.players.filter(p => p.name !== player.name).concat(player),
-      gameState: this.state.gameState
+      gameState: this.state.gameState,
+      numRounds: this.state.numRounds,
+      round: this.state.round
     });
   },
 
@@ -96,21 +106,25 @@ let Room = React.createClass({
     });
   },
 
-  gameStarting({game_state, players}) {
+  gameStarting({game_state, num_rounds, players}) {
     this.refs.countdownModal.setReady(false);
 
     this.setState({
       players: players,
-      gameState: game_state
+      gameState: game_state,
+      numRounds: num_rounds,
+      round: this.state.round
     });
   },
 
-  roundStarting({game_state, players}) {
+  roundStarting({game_state, round, players}) {
     this.refs.countdownModal.setReady(false);
 
     this.setState({
       players: players, 
-      gameState: game_state
+      gameState: game_state,
+      numRounds: this.state.numRounds,
+      round: round
     });
 
     this.refs.map.resetView();
@@ -123,7 +137,9 @@ let Room = React.createClass({
     
     this.setState({
       players: players, 
-      gameState: game_state
+      gameState: game_state,
+      numRounds: this.state.numRounds,
+      round: this.state.round
     });
 
     this.setStatusMessage(loc);
@@ -134,7 +150,9 @@ let Room = React.createClass({
 
     this.setState({
       players: players, 
-      gameState: game_state
+      gameState: game_state,
+      numRounds: this.state.numRounds,
+      round: this.state.round
     });
 
     this.refs.status.setMessage("");
@@ -146,7 +164,9 @@ let Room = React.createClass({
 
     this.setState({
       players: players, 
-      gameState: game_state
+      gameState: game_state,
+      numRounds: this.state.numRounds,
+      round: this.state.round
     });
   },
 

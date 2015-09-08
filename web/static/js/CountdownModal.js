@@ -33,7 +33,7 @@ let CountdownModal = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      message: this.getGameStateMessage(nextProps.gameState),
+      message: this.getGameStateMessage(nextProps.gameState, nextProps.round, nextProps.numRounds),
       countdown: this.state.countdown,
       ready: this.state.ready
     });
@@ -64,14 +64,14 @@ let CountdownModal = React.createClass({
     });
   },
 
-  getGameStateMessage(gameState) {
+  getGameStateMessage(gameState, round, numRounds) {
     switch (gameState) {
       case "game_starting":
         return "New game is starting...";
       case "round_starting":
-        return "Next round is starting...";
+        return `${round}/${numRounds} Next round is starting...`;
       case "round_finished":
-        return "Round finished";
+        return `${round}/${numRounds} Round finished`;
       case "game_ended":
         return "Game over";
       default: 
@@ -110,12 +110,12 @@ let CountdownModal = React.createClass({
 
     var scoreboard;
     if (this.props.gameState === "game_starting") {
-      scoreboard = <GameStartingScoreboard players={this.props.players} />;
+      scoreboard = <GameStartingScoreboard {...this.props} />;
     } else if (this.props.gameState === "round_starting"
                || this.props.gameState === "game_ended") {
-      scoreboard = <RoundStartingScoreboard players={this.props.players} />;
+      scoreboard = <RoundStartingScoreboard {...this.props} />;
     } else if (this.props.gameState === "round_finished") {
-      scoreboard = <RoundFinishedScoreboard players={this.props.players} />;
+      scoreboard = <RoundFinishedScoreboard {...this.props} />;
     } 
 
     return (
