@@ -23,8 +23,19 @@ let StatusArea = React.createClass({
   },
 
   render() {
+    var colorClass = "alert-success";
+    if (this.state.countdown) {
+      if (this.state.countdown < 7) {
+        colorClass = "alert-warning";
+      }
+
+      if (this.state.countdown < 4) {
+        colorClass = "alert-danger";
+      }
+    }
+
     return (
-      <div className="well well-sm">
+      <div className={"alert " + colorClass}>
         <div className="container-fluid">
           <div className="row statusArea">
             <div className="col-md-2">
