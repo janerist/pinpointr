@@ -11,7 +11,6 @@ let CountdownModal = React.createClass({
 
   getInitialState() {
     return {
-      countdown: null,
       ready: false
     };
   },
@@ -43,13 +42,6 @@ let CountdownModal = React.createClass({
     $(this.getDOMNode()).modal("hide");
   },
 
-  setCountdown(countdown) {
-    this.setState({
-      countdown: countdown,
-      ready: this.state.ready
-    });
-  },
-
   getGameStateMessage() {
     switch (this.props.gameState) {
       case "game_starting":
@@ -67,7 +59,6 @@ let CountdownModal = React.createClass({
 
   setReady(ready) {
     this.setState({
-      countdown: this.state.countdown,
       ready: ready 
     });
   },
@@ -76,7 +67,6 @@ let CountdownModal = React.createClass({
     let ready = !this.state.ready;
 
     this.setState({
-      countdown: this.state.countdown,
       ready: ready 
     });
 
@@ -113,14 +103,14 @@ let CountdownModal = React.createClass({
             <div className="modal-header">
               <div className="container-fluid">
                 <div className="row">
-                  <div className="col-md-2">
-                    <Countdown countdown={this.state.countdown} />
+                  <div className="col-md-1 col-sm-2 col-xs-3">
+                    <Countdown countdown={this.props.countdown} />
                   </div>
-                  <div className="col-md-8 text-center">
-                    <div className="gameStateMessage">{message}</div>
+                  <div className="col-md-10 col-sm-8 col-xs-6 text-center">
+                    <div style={{fontWeight: "bold"}}>{message}</div>
                   </div>
-                  <div className="col-md-2 text-right">
-                    <Countdown countdown={this.state.countdown} />
+                  <div className="col-md-1 col-sm-2 col-xs-3 text-right">
+                    <Countdown countdown={this.props.countdown} />
                   </div>
                 </div>
               </div>

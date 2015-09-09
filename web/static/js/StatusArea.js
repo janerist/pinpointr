@@ -3,56 +3,51 @@ import Countdown from "./Countdown";
 let StatusArea = React.createClass({
   getInitialState() {
     return {
-      message: "",
-      countdown: null
+      message: ""
     }
   },
 
   setMessage(message) {
     this.setState({
-      message: message,
-      countdown: this.state.countdown
-    });
-  },
-
-  setCountdown(countdown) {
-    this.setState({
-      message: this.state.message,
-      countdown: countdown
+      message: message
     });
   },
 
   render() {
-    var colorClass = "alert-success";
-    if (this.state.countdown) {
-      if (this.state.countdown < 7) {
-        colorClass = "alert-warning";
+    if (this.props.gameState === "round_started") {
+      var colorClass = "alert-success";
+      if (this.props.countdown) {
+        if (this.props.countdown < 7) {
+          colorClass = "alert-warning";
+        }
+
+        if (this.props.countdown < 4) {
+          colorClass = "alert-danger";
+        }
       }
 
-      if (this.state.countdown < 4) {
-        colorClass = "alert-danger";
-      }
-    }
-
-    return (
-      <div className={"alert " + colorClass}>
-        <div className="container-fluid">
-          <div className="row statusArea">
-            <div className="col-md-2">
-              <Countdown countdown={this.state.countdown} colorize={true} />
-            </div>
-            <div className="col-md-8 text-center">
-              <div className="statusMessage">
-                {this.state.message}&nbsp;
+      return (
+        <div className={"alert " + colorClass}>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-1 col-sm-2 col-xs-3">
+                <Countdown countdown={this.props.countdown} colorize={true} />
               </div>
-            </div>
-            <div className="col-md-2 text-right">
-              <Countdown countdown={this.state.countdown} colorize={true} />
+              <div className="col-md-10 col-sm-8 col-xs-6 text-center">
+                <div style={{ fontWeight: "bold", fontSize: 18 }}>
+                  {this.state.message}
+                </div>
+              </div>
+              <div className="col-md-1 col-sm-2 col-xs-3 text-right">
+                <Countdown countdown={this.props.countdown} colorize={true} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (<div></div>)
+    }
   }
 });
 

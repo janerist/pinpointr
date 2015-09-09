@@ -11,6 +11,7 @@ let Room = React.createClass({
     return { 
       players: [],
       gameState: "waiting_for_players",
+      countdown: null,
       numRounds: null,
       round: null
     };
@@ -38,6 +39,7 @@ let Room = React.createClass({
         this.setState({
           players: roomState.players,
           gameState: roomState.game_state,
+          countdown: null,
           numRounds: roomState.num_rounds,
           round: roomState.round
         });
@@ -66,6 +68,7 @@ let Room = React.createClass({
     this.setState({
       players: this.state.players.filter(p => p.name !== player.name).concat(player),
       gameState: this.state.gameState,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: this.state.round
     });
@@ -79,6 +82,7 @@ let Room = React.createClass({
     this.setState({
       players: this.state.players.filter(p => p.name !== player.name),
       gameState: this.state.gameState,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: this.state.round
     });
@@ -92,6 +96,7 @@ let Room = React.createClass({
     this.setState({
       players: this.state.players.filter(p => p.name !== player.name).concat(player),
       gameState: this.state.gameState,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: this.state.round
     });
@@ -112,6 +117,7 @@ let Room = React.createClass({
     this.setState({
       players: players,
       gameState: game_state,
+      countdown: this.state.countdown,
       numRounds: num_rounds,
       round: this.state.round
     });
@@ -123,13 +129,12 @@ let Room = React.createClass({
     this.setState({
       players: players, 
       gameState: game_state,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: round
     });
 
     this.refs.map.resetView();
-    this.refs.status.setMessage("");
-    this.refs.status.setCountdown(null);
   },
 
   roundStarted({game_state, players, loc}) {
@@ -138,6 +143,7 @@ let Room = React.createClass({
     this.setState({
       players: players, 
       gameState: game_state,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: this.state.round
     });
@@ -151,12 +157,10 @@ let Room = React.createClass({
     this.setState({
       players: players, 
       gameState: game_state,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: this.state.round
     });
-
-    this.refs.status.setMessage("");
-    this.refs.status.setCountdown(null);
   },
 
   gameEnded({game_state, players}) {
@@ -165,24 +169,20 @@ let Room = React.createClass({
     this.setState({
       players: players, 
       gameState: game_state,
+      countdown: this.state.countdown,
       numRounds: this.state.numRounds,
       round: this.state.round
     });
   },
 
   countdown({countdown}) {
-    switch (this.state.gameState) {
-      case "game_starting":
-      case "round_starting":
-      case "round_finished": 
-      case "game_ended":
-        this.refs.countdownModal.setCountdown(countdown);
-        break;
-
-      case "round_started":
-        this.refs.status.setCountdown(countdown);
-        break;
-    }
+    this.setState({
+      players: this.state.players,
+      gameState: this.state.gameState,
+      countdown: countdown,
+      numRounds: this.state.numRounds,
+      round: this.state.round
+    });
   },
 
   setStatusMessage(loc) {
@@ -212,7 +212,7 @@ let Room = React.createClass({
       <div className="container-fluid">
         <div className="row">
           <div className="col-lg-9">
-            <StatusArea ref="status" />
+            <StatusArea ref="status" {...this.state} />
             <Map ref="map" zxy={this.props.zxy} pinpointed={this.handlePinpoint} />
           </div>
           <div className="col-lg-3">
