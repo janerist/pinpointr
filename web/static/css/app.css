@@ -47,7 +47,3 @@ html {
 .countdownModal .modal-body {
   overflow-y: scroll;
 }
-
-.countdown {
-  font-size: 16px;
-}

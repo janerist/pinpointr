@@ -3,6 +3,8 @@ import {
   RoundStartingScoreboard, 
   RoundFinishedScoreboard} from "./Scoreboard";
 
+import Countdown from "./Countdown";
+
 let CountdownModal = React.createClass({
   getInitialState() {
     return {
@@ -126,17 +128,13 @@ let CountdownModal = React.createClass({
               <div className="container-fluid">
                 <div className="row">
                   <div className="col-md-2">
-                    <span className="countdown badge badge-default">
-                      {this.state.countdown}
-                    </span>
+                    <Countdown countdown={this.state.countdown} />
                   </div>
                   <div className="col-md-8 text-center">
                     <div className="gameStateMessage">{this.state.message}</div>
                   </div>
                   <div className="col-md-2 text-right">
-                    <span className="countdown badge badge-default">
-                      {this.state.countdown}
-                    </span>
+                    <Countdown countdown={this.state.countdown} />
                   </div>
                 </div>
               </div>

@@ -1,3 +1,5 @@
+import Countdown from "./Countdown";
+
 let StatusArea = React.createClass({
   getInitialState() {
     return {
@@ -26,9 +28,7 @@ let StatusArea = React.createClass({
         <div className="container-fluid">
           <div className="row statusArea">
             <div className="col-md-2">
-              <span className="countdown badge badge-default">
-                {this.state.countdown}
-              </span>
+              <Countdown countdown={this.state.countdown} />
             </div>
             <div className="col-md-8 text-center">
               <div className="statusMessage">
@@ -36,9 +36,7 @@ let StatusArea = React.createClass({
               </div>
             </div>
             <div className="col-md-2 text-right">
-              <span className="countdown badge badge-default">
-                {this.state.countdown}
-              </span>
+              <Countdown countdown={this.state.countdown} />
             </div>
           </div>
         </div>
