@@ -49,7 +49,6 @@ let Room = React.createClass({
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
         channel.on("player:updated", this.playerUpdated);
-        channel.on("player:pinpoint", this.playerPinpointed);
         channel.on("chat:message", this.refs.chat.addMessage);
         channel.on("game:gameStarting", this.gameStarting);
         channel.on("game:roundStarting", this.roundStarting);
@@ -105,15 +104,6 @@ let Room = React.createClass({
     });
   },
 
-  playerPinpointed({player}) {
-    this.playerUpdated({player: player});
-
-    this.refs.chat.addMessage({
-      message: `${player.name} pinpointed ${Math.round(player.round_distance)} meters 
-        from the target.`
-    });
-  },
-
   gameStarting({game_state, num_rounds, players}) {
     this.setState({
       players: players,
@@ -135,7 +125,7 @@ let Room = React.createClass({
       currentLoc: this.state.currentLoc
     });
 
-    this.refs.map.resetView();
+    this.refs.map.reset();
   },
 
   roundStarted({game_state, players, loc}) {
@@ -195,7 +185,11 @@ let Room = React.createClass({
   },
 
   handlePinpoint(latlng) {
-    this.channel.push("player:pinpoint", {latlng: latlng})
+    this.channel
+      .push("player:pinpoint", {latlng: latlng})
+      .receive("ok", reply => {
+        this.refs.map.handlePinpointReply(latlng, reply);
+      });
   },
 
   render() {

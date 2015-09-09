@@ -110,7 +110,16 @@ defmodule Pinpointr.GameServer do
           points: p.points + points}
         end
 
-        {:reply, %{player: HashDict.get(players, name)}, %{state | players: players}}
+        {lat, lng} = state.current_loc.latlng.coordinates
+        reply = %{
+          player_name: name,
+          time_used: time_used,
+          distance: distance,
+          points: points,
+          target_latlng: [lat, lng]
+        }
+
+        {:reply, reply, %{state | players: players}}
     end
   end
 

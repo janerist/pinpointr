@@ -2,7 +2,13 @@ exports.config = {
   // See http://brunch.io/#documentation for docs.
   files: {
     javascripts: {
-      joinTo: 'js/app.js'
+      joinTo: 'js/app.js',
+      order: {
+        before: [
+          'bower_components/leaflet/dist/leaflet-src.js',
+          'bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js' 
+        ]
+      },
       // To use a separate vendor.js bundle, specify two files path
       // https://github.com/brunch/brunch/blob/stable/docs/config.md#files
       // joinTo: {
