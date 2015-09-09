@@ -16,7 +16,8 @@ let Room = React.createClass({
       countdown: null,
       numRounds: null,
       round: null,
-      currentLoc: null
+      currentLoc: null,
+      ready: false
     };
   },
 
@@ -39,14 +40,13 @@ let Room = React.createClass({
 
         this.socket = socket;
         this.channel = channel;
-        this.setState({
-          players: roomState.players,
-          gameState: roomState.game_state,
-          countdown: null,
-          numRounds: roomState.num_rounds,
-          round: roomState.round,
-          currentLoc: roomState.current_loc
-        });
+        this.setState(update(this.state, {
+          players: {$set: roomState.players},
+          gameState: {$set: roomState.game_state},
+          numRounds: {$set: roomState.num_rounds},
+          round: {$set: roomState.round},
+          currentLoc: {$set: roomState.current_loc}
+        }));
 
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
@@ -95,7 +95,8 @@ let Room = React.createClass({
     this.setState(update(this.state, {
       players: {$set: players},
       gameState: {$set: game_state},
-      numRounds: {$set: num_rounds}
+      numRounds: {$set: num_rounds},
+      ready: {$set: false}
     }));
   },
 
@@ -103,7 +104,8 @@ let Room = React.createClass({
     this.setState(update(this.state, {
       players: {$set: players},
       gameState: {$set: game_state},
-      round: {$set: round}
+      round: {$set: round},
+      ready: {$set: false}
     }));
 
     this.refs.map.reset();
@@ -120,14 +122,16 @@ let Room = React.createClass({
   roundFinished({game_state, players}) {
     this.setState(update(this.state, {
       players: {$set: players},
-      gameState: {$set: game_state}
+      gameState: {$set: game_state},
+      ready: {$set: false}
     }));
   },
 
   gameEnded({game_state, players}) {
     this.setState(update(this.state, {
       players: {$set: players},
-      gameState: {$set: game_state}
+      gameState: {$set: game_state},
+      ready: {$set: false}
     }));
   },
 
@@ -145,7 +149,12 @@ let Room = React.createClass({
     this.channel.push("chat:message", {message: message});
   },
 
-  handleToggleReady(ready) {
+  handleToggleReady() {
+    let ready = !this.state.ready;
+    this.setState(update(this.state, {
+      ready: {$set: ready}
+    }));
+
     this.channel.push("player:ready", {ready: ready})
   },
 

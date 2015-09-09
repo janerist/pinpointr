@@ -8,12 +8,6 @@ import {AutosizeModalBody} from "./mixins";
 
 let CountdownModal = React.createClass({
   mixins: [AutosizeModalBody],
-
-  getInitialState() {
-    return {
-      ready: false
-    };
-  },
                    
   componentDidMount() {
     $(this.getDOMNode()).modal({
@@ -29,10 +23,6 @@ let CountdownModal = React.createClass({
         || nextProps.gameState === "round_starting" 
         || nextProps.gameState === "round_finished"
         || nextProps.gameState === "game_ended";
-
-    if (nextProps.gameState !== this.props.gameState) {
-      this.setState({ ready: false }); 
-    }
 
     $(this.getDOMNode()).modal(shouldModalBeVisible ? "show" : "hide");
   },
@@ -63,20 +53,10 @@ let CountdownModal = React.createClass({
     } 
   },
 
-  toggleReady() {
-    let ready = !this.state.ready;
-
-    this.setState({
-      ready: ready 
-    });
-
-    this.props.readyToggled(ready);
-  },
-
   render() {
-    let btnText = this.state.ready ? "Not ready" : "Ready";
+    let btnText = this.props.ready ? "Not ready" : "Ready";
     var btnClasses = "btn btn-block";
-    if (this.state.ready) {
+    if (this.props.ready) {
       btnClasses += " btn-danger";
     } else {
       btnClasses += " btn-success";
@@ -117,7 +97,7 @@ let CountdownModal = React.createClass({
               <div className="text-center">
                 <button type="button" 
                         className={btnClasses}
-                        onClick={this.toggleReady}>
+                        onClick={this.props.readyToggled}>
                   {btnText}
                 </button>
               </div>
