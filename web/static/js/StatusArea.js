@@ -1,18 +1,6 @@
 import Countdown from "./Countdown";
 
 let StatusArea = React.createClass({
-  getInitialState() {
-    return {
-      message: ""
-    }
-  },
-
-  setMessage(message) {
-    this.setState({
-      message: message
-    });
-  },
-
   render() {
     if (this.props.gameState === "round_started") {
       var colorClass = "alert-success";
@@ -35,7 +23,7 @@ let StatusArea = React.createClass({
               </div>
               <div className="col-md-10 col-sm-8 col-xs-6 text-center">
                 <div style={{ fontWeight: "bold", fontSize: 18 }}>
-                  {this.state.message}
+                  Pinpoint "{this.props.currentLoc}"
                 </div>
               </div>
               <div className="col-md-1 col-sm-2 col-xs-3 text-right">

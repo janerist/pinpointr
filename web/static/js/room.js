@@ -13,7 +13,8 @@ let Room = React.createClass({
       gameState: "waiting_for_players",
       countdown: null,
       numRounds: null,
-      round: null
+      round: null,
+      currentLoc: null
     };
   },
 
@@ -41,10 +42,9 @@ let Room = React.createClass({
           gameState: roomState.game_state,
           countdown: null,
           numRounds: roomState.num_rounds,
-          round: roomState.round
+          round: roomState.round,
+          currentLoc: roomState.current_loc
         });
-
-        this.setStatusMessage(roomState.current_loc);
 
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
@@ -70,7 +70,8 @@ let Room = React.createClass({
       gameState: this.state.gameState,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
 
     this.refs.chat.addMessage({
@@ -84,7 +85,8 @@ let Room = React.createClass({
       gameState: this.state.gameState,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
 
     this.refs.chat.addMessage({
@@ -98,7 +100,8 @@ let Room = React.createClass({
       gameState: this.state.gameState,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
   },
 
@@ -112,66 +115,59 @@ let Room = React.createClass({
   },
 
   gameStarting({game_state, num_rounds, players}) {
-    this.refs.countdownModal.setReady(false);
-
     this.setState({
       players: players,
       gameState: game_state,
       countdown: this.state.countdown,
       numRounds: num_rounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
   },
 
   roundStarting({game_state, round, players}) {
-    this.refs.countdownModal.setReady(false);
-
     this.setState({
       players: players, 
       gameState: game_state,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: round
+      round: round,
+      currentLoc: this.state.currentLoc
     });
 
     this.refs.map.resetView();
   },
 
   roundStarted({game_state, players, loc}) {
-    this.refs.countdownModal.setReady(false);
-    
     this.setState({
       players: players, 
       gameState: game_state,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: loc 
     });
-
-    this.setStatusMessage(loc);
   },
 
   roundFinished({game_state, players}) {
-    this.refs.countdownModal.setReady(false);
-
     this.setState({
       players: players, 
       gameState: game_state,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
   },
 
   gameEnded({game_state, players}) {
-    this.refs.countdownModal.setReady(false);
-
     this.setState({
       players: players, 
       gameState: game_state,
       countdown: this.state.countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
   },
 
@@ -181,14 +177,9 @@ let Room = React.createClass({
       gameState: this.state.gameState,
       countdown: countdown,
       numRounds: this.state.numRounds,
-      round: this.state.round
+      round: this.state.round,
+      currentLoc: this.state.currentLoc
     });
-  },
-
-  setStatusMessage(loc) {
-    if (loc) {
-      this.refs.status.setMessage(`Pinpoint "${loc}"`);
-    }
   },
 
   handleMessageSubmitted(message) {

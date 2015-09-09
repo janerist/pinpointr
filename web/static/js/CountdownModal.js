@@ -24,22 +24,17 @@ let CountdownModal = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.gameState === "game_starting" 
+    let shouldModalBeVisible = 
+      nextProps.gameState === "game_starting" 
         || nextProps.gameState === "round_starting" 
         || nextProps.gameState === "round_finished"
-        || nextProps.gameState === "game_ended") {
-      this.open();
-    } else {
-      this.close();
+        || nextProps.gameState === "game_ended";
+
+    if (nextProps.gameState !== this.props.gameState) {
+      this.setState({ ready: false }); 
     }
-  },
 
-  open() {
-    $(this.getDOMNode()).modal("show");
-  },
-
-  close() {
-    $(this.getDOMNode()).modal("hide");
+    $(this.getDOMNode()).modal(shouldModalBeVisible ? "show" : "hide");
   },
 
   getGameStateMessage() {
@@ -57,10 +52,15 @@ let CountdownModal = React.createClass({
     }
   },
 
-  setReady(ready) {
-    this.setState({
-      ready: ready 
-    });
+  getScoreboard() {
+    if (this.props.gameState === "game_starting") {
+      return (<GameStartingScoreboard {...this.props} />);
+    } else if (this.props.gameState === "round_starting"
+               || this.props.gameState === "game_ended") {
+      return (<RoundStartingScoreboard {...this.props} />);
+    } else if (this.props.gameState === "round_finished") {
+      return (<RoundFinishedScoreboard {...this.props} />);
+    } 
   },
 
   toggleReady() {
@@ -71,17 +71,6 @@ let CountdownModal = React.createClass({
     });
 
     this.props.readyToggled(ready);
-  },
-
-  getScoreboard() {
-    if (this.props.gameState === "game_starting") {
-      return (<GameStartingScoreboard {...this.props} />);
-    } else if (this.props.gameState === "round_starting"
-               || this.props.gameState === "game_ended") {
-      return (<RoundStartingScoreboard {...this.props} />);
-    } else if (this.props.gameState === "round_finished") {
-      return (<RoundFinishedScoreboard {...this.props} />);
-    } 
   },
 
   render() {
