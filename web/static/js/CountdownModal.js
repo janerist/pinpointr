@@ -1,14 +1,16 @@
 import {
   GameStartingScoreboard, 
   RoundStartingScoreboard, 
-  RoundFinishedScoreboard} from "./Scoreboard";
-
+  RoundFinishedScoreboard
+} from "./Scoreboard";
 import Countdown from "./Countdown";
+import {AutosizeModalBody} from "./mixins";
 
 let CountdownModal = React.createClass({
+  mixins: [AutosizeModalBody],
+
   getInitialState() {
     return {
-      message: "",
       countdown: null,
       ready: false
     };
@@ -20,26 +22,9 @@ let CountdownModal = React.createClass({
       keyboard: false,
       show: false
     });
-
-    window.addEventListener("resize", this.resizeModalBody);
-    this.resizeModalBody();
-  },
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.resizeModalBody);
-  },
-
-  resizeModalBody() {
-    $(".modal-body", ".countdownModal").height($(window).height() * 0.5);
   },
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      message: this.getGameStateMessage(nextProps.gameState, nextProps.round, nextProps.numRounds),
-      countdown: this.state.countdown,
-      ready: this.state.ready
-    });
-
     if (nextProps.gameState === "game_starting" 
         || nextProps.gameState === "round_starting" 
         || nextProps.gameState === "round_finished"
@@ -60,20 +45,19 @@ let CountdownModal = React.createClass({
 
   setCountdown(countdown) {
     this.setState({
-      message: this.state.message,
       countdown: countdown,
       ready: this.state.ready
     });
   },
 
-  getGameStateMessage(gameState, round, numRounds) {
-    switch (gameState) {
+  getGameStateMessage() {
+    switch (this.props.gameState) {
       case "game_starting":
         return "New game is starting...";
       case "round_starting":
-        return `${round}/${numRounds} Next round is starting...`;
+        return `${this.props.round}/${this.props.numRounds} Next round is starting...`;
       case "round_finished":
-        return `${round}/${numRounds} Round finished`;
+        return `${this.props.round}/${this.props.numRounds} Round finished`;
       case "game_ended":
         return "Game over";
       default: 
@@ -83,7 +67,6 @@ let CountdownModal = React.createClass({
 
   setReady(ready) {
     this.setState({
-      message: this.state.message,
       countdown: this.state.countdown,
       ready: ready 
     });
@@ -93,12 +76,22 @@ let CountdownModal = React.createClass({
     let ready = !this.state.ready;
 
     this.setState({
-      message: this.state.message,
       countdown: this.state.countdown,
       ready: ready 
     });
 
     this.props.readyToggled(ready);
+  },
+
+  getScoreboard() {
+    if (this.props.gameState === "game_starting") {
+      return (<GameStartingScoreboard {...this.props} />);
+    } else if (this.props.gameState === "round_starting"
+               || this.props.gameState === "game_ended") {
+      return (<RoundStartingScoreboard {...this.props} />);
+    } else if (this.props.gameState === "round_finished") {
+      return (<RoundFinishedScoreboard {...this.props} />);
+    } 
   },
 
   render() {
@@ -110,15 +103,8 @@ let CountdownModal = React.createClass({
       btnClasses += " btn-success";
     }
 
-    var scoreboard;
-    if (this.props.gameState === "game_starting") {
-      scoreboard = <GameStartingScoreboard {...this.props} />;
-    } else if (this.props.gameState === "round_starting"
-               || this.props.gameState === "game_ended") {
-      scoreboard = <RoundStartingScoreboard {...this.props} />;
-    } else if (this.props.gameState === "round_finished") {
-      scoreboard = <RoundFinishedScoreboard {...this.props} />;
-    } 
+    var scoreboard = this.getScoreboard();
+    var message = this.getGameStateMessage();
 
     return (
       <div className="countdownModal modal fade" tabIndex="-1" role="dialog">
@@ -131,7 +117,7 @@ let CountdownModal = React.createClass({
                     <Countdown countdown={this.state.countdown} />
                   </div>
                   <div className="col-md-8 text-center">
-                    <div className="gameStateMessage">{this.state.message}</div>
+                    <div className="gameStateMessage">{message}</div>
                   </div>
                   <div className="col-md-2 text-right">
                     <Countdown countdown={this.state.countdown} />

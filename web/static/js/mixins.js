@@ -14,3 +14,19 @@ export let SetFullHeightMixin = {
     $domNode.height($(window).height() - offset.top - 10);
   }
 };
+
+export let AutosizeModalBody = {
+  componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+  },
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  },
+
+  handleResize() {
+    let $domNode = $(this.getDOMNode());
+    $(".modal-body", $domNode).height($(window).height() * 0.5);
+  }
+};
