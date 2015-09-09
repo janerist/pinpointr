@@ -17,7 +17,10 @@ let Room = React.createClass({
       numRounds: null,
       round: null,
       currentLoc: null,
-      ready: false
+      ready: false,
+      roundTimeUsed: null,
+      roundDistance: null,
+      roundPoints: null
     };
   },
 
@@ -123,7 +126,10 @@ let Room = React.createClass({
     this.setState(update(this.state, {
       players: {$set: players},
       gameState: {$set: game_state},
-      ready: {$set: false}
+      ready: {$set: false},
+      roundTimeUsed: {$set: null},
+      roundDistance: {$set: null},
+      roundPoints: {$set: null}
     }));
   },
 
@@ -162,6 +168,11 @@ let Room = React.createClass({
     this.channel
       .push("player:pinpoint", {latlng: latlng})
       .receive("ok", reply => {
+        this.setState(update(this.state, {
+          roundTimeUsed: {$set: reply.time_used},
+          roundDistance: {$set: reply.distance},
+          roundPoints: {$set: reply.points}
+        }));
         this.refs.map.handlePinpointReply(latlng, reply);
       });
   },
