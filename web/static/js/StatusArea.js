@@ -24,11 +24,11 @@ let StatusArea = React.createClass({
 
   render() {
     return (
-      <div className="alert alert-warning">
+      <div className="well well-sm">
         <div className="container-fluid">
           <div className="row statusArea">
             <div className="col-md-2">
-              <Countdown countdown={this.state.countdown} />
+              <Countdown countdown={this.state.countdown} colorize={true} />
             </div>
             <div className="col-md-8 text-center">
               <div className="statusMessage">
@@ -36,7 +36,7 @@ let StatusArea = React.createClass({
               </div>
             </div>
             <div className="col-md-2 text-right">
-              <Countdown countdown={this.state.countdown} />
+              <Countdown countdown={this.state.countdown} colorize={true} />
             </div>
           </div>
         </div>
