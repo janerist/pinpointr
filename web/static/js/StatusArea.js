@@ -15,7 +15,7 @@ let StatusArea = React.createClass({
       }
 
       return (
-        <div className={"alert " + colorClass}>
+        <div className={"alert " + colorClass} style={{marginBottom: 0, paddingBottom: 0}}>
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-1 col-sm-2 col-xs-3">
@@ -24,6 +24,7 @@ let StatusArea = React.createClass({
               <div className="col-md-10 col-sm-8 col-xs-6 text-center">
                 <div style={{ fontWeight: "bold", fontSize: 18 }}>
                   Pinpoint "{this.props.currentLoc}"
+                  <p style={{fontSize: 9}}>(double-click to pinpoint)</p>
                 </div>
               </div>
               <div className="col-md-1 col-sm-2 col-xs-3 text-right">
