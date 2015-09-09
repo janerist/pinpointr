@@ -30,6 +30,11 @@
         "dist/leaflet.css",
         "dist/leaflet-src.js"
       ]
+    },
+    "react": {
+      "main": [
+        "react-with-addons.js"
+      ]
     }
   }
 }

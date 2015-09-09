@@ -6,6 +6,8 @@ import Chat from "./Chat";
 import StatusArea from "./StatusArea";
 import CountdownModal from "./CountdownModal";
 
+let update = React.addons.update;
+
 let Room = React.createClass({
   getInitialState() {
     return { 
@@ -64,14 +66,9 @@ let Room = React.createClass({
   },
 
   playerJoined({player}) {
-    this.setState({
-      players: this.state.players.filter(p => p.name !== player.name).concat(player),
-      gameState: this.state.gameState,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$push: [player]}
+    }));
 
     this.refs.chat.addMessage({
       message: `${player.name} has joined the room.`
@@ -79,14 +76,9 @@ let Room = React.createClass({
   },
 
   playerLeft({player}) {
-    this.setState({
-      players: this.state.players.filter(p => p.name !== player.name),
-      gameState: this.state.gameState,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$set: this.state.players.filter(p => p.name !== player.name)}
+    }));
 
     this.refs.chat.addMessage({
       message: `${player.name} has left the room.`
@@ -94,82 +86,55 @@ let Room = React.createClass({
   },
 
   playerUpdated({player}) {
-    this.setState({
-      players: this.state.players.filter(p => p.name !== player.name).concat(player),
-      gameState: this.state.gameState,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$set: this.state.players.filter(p => p.name !== player.name).concat(player)}
+    }));
   },
 
   gameStarting({game_state, num_rounds, players}) {
-    this.setState({
-      players: players,
-      gameState: game_state,
-      countdown: this.state.countdown,
-      numRounds: num_rounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$set: players},
+      gameState: {$set: game_state},
+      numRounds: {$set: num_rounds}
+    }));
   },
 
   roundStarting({game_state, round, players}) {
-    this.setState({
-      players: players, 
-      gameState: game_state,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$set: players},
+      gameState: {$set: game_state},
+      round: {$set: round}
+    }));
 
     this.refs.map.reset();
   },
 
   roundStarted({game_state, players, loc}) {
-    this.setState({
-      players: players, 
-      gameState: game_state,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: loc 
-    });
+    this.setState(update(this.state, {
+      players: {$set: players},
+      gameState: {$set: game_state},
+      currentLoc: {$set: loc}
+    }));
   },
 
   roundFinished({game_state, players}) {
-    this.setState({
-      players: players, 
-      gameState: game_state,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$set: players},
+      gameState: {$set: game_state}
+    }));
   },
 
   gameEnded({game_state, players}) {
-    this.setState({
-      players: players, 
-      gameState: game_state,
-      countdown: this.state.countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      players: {$set: players},
+      gameState: {$set: game_state}
+    }));
   },
 
   countdown({countdown}) {
-    this.setState({
-      players: this.state.players,
-      gameState: this.state.gameState,
-      countdown: countdown,
-      numRounds: this.state.numRounds,
-      round: this.state.round,
-      currentLoc: this.state.currentLoc
-    });
+    this.setState(update(this.state, {
+      countdown: {$set: countdown}
+    }));
   },
 
   handleMessageSubmitted(message) {

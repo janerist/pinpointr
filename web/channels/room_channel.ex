@@ -27,7 +27,7 @@ defmodule Pinpointr.RoomChannel do
   def terminate(_reason, socket) do
     game = get_game(socket.topic)
     player = GameServer.remove_player(game, socket.assigns[:name])
-    broadcast!(socket, "player:left", %{player: player})
+    broadcast_from!(socket, "player:left", %{player: player})
     broadcast_room_updated_to_lobby(game)
   end
 
@@ -68,7 +68,7 @@ defmodule Pinpointr.RoomChannel do
   # Internal message handlers
   # --------------------------------------------------------------------------
   def handle_info({:after_join, game, player}, socket) do
-    broadcast!(socket, "player:joined", %{player: player})
+    broadcast_from!(socket, "player:joined", %{player: player})
     broadcast_room_updated_to_lobby(game) 
     {:noreply, socket}
   end
