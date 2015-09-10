@@ -9,5 +9,6 @@ config :pinpointr, Pinpointr.Endpoint,
 # Configure your database
 config :pinpointr, Pinpointr.Repo,
   adapter: Ecto.Adapters.Postgres,
+  extensions: [{Geo.PostGIS.Extension, library: Geo}],
   url: {:system, "PINPOINTR_DB_URL"},
   pool_size: 20
