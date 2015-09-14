@@ -53,7 +53,11 @@ export let RoundStartingScoreboard = React.createClass({
           {this.sort(this.props.players).map(player => {
             return (
               <tr key={player.name}>
-                <td>{player.name} [{player.ready ? "Ready" : "Not ready"}]</td>
+                <td>
+                  <span style={{color: player.ready ? "green" : "initial" }}>
+                    {player.name}
+                  </span>
+                </td>
                 <td className="text-right">{player.points}</td>
               </tr>
             );
@@ -106,15 +110,20 @@ export let RoundFinishedScoreboard = React.createClass({
           {this.sort(this.props.players).map(player => {
             return (
               <tr key={player.name}>
-                <td>{player.name} [{player.ready ? "Ready" : "Not ready"}]</td>
+                <td>
+                  <span style={{color: player.ready ? "green" : "initial" }}>
+                    {player.name}
+                  </span>
+                </td>
                 <td className="text-right">
                   {player.round_time ? Math.round(player.round_time / 1000) + "s" : "-"}
                 </td>
                 <td className="text-right">
                   {player.round_distance ? Math.round(player.round_distance) + "m" : "-"}
                 </td>
-                <td className="text-right roundPoints">
-                  {player.round_points ? "+" + player.round_points : "-"}</td>
+                <td className="text-right" style={{ color: "green" }}>
+                  {player.round_points ? "+" + player.round_points : "-"}
+                </td>
               </tr>
             );
           })}
