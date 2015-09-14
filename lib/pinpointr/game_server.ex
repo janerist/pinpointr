@@ -152,7 +152,7 @@ defmodule Pinpointr.GameServer do
   end
 
   defp handle_gs_changed(:game_starting, state) do
-    players = reset_players_for_game(state.players)
+    players = update_players state.players, ready: false, points: 0
     locs = Location.get_locs(state.id)
     num_rounds = length(locs)
     broadcast_to_room(state.id,
@@ -169,7 +169,10 @@ defmodule Pinpointr.GameServer do
   end
 
   defp handle_gs_changed(:round_starting, state) do
-    players = reset_players_for_round(state.players)
+    players = update_players state.players, ready: false, 
+                                            rounds_distance: nil, 
+                                            round_time: nil, 
+                                            round_points: nil
 
     :random.seed(:os.timestamp)
     [next_loc | locs] = Enum.shuffle(state.locs)
@@ -187,7 +190,7 @@ defmodule Pinpointr.GameServer do
   end
 
   defp handle_gs_changed(:round_started, state) do
-    players = set_all_players_not_ready(state.players)
+    players = update_players state.players, ready: false
 
     broadcast_to_room(state.id,
                       "game:roundStarted",
@@ -200,7 +203,7 @@ defmodule Pinpointr.GameServer do
   end
 
   defp handle_gs_changed(:round_finished, state) do
-    players = set_all_players_not_ready(state.players)
+    players = update_players state.players, ready: false
     broadcast_to_room(state.id,
                       "game:roundFinished",
                       %{game_state: state.game_state,
@@ -218,7 +221,7 @@ defmodule Pinpointr.GameServer do
   end
 
   defp handle_gs_changed(:game_ended, state) do
-    players = set_all_players_not_ready(state.players)
+    players = update_players state.players, ready: false
     broadcast_to_room(state.id,
                       "game:gameEnded",
                       %{game_state: state.game_state,
@@ -248,27 +251,10 @@ defmodule Pinpointr.GameServer do
   end
 
   defp all_players_ready?(players) do
-    HashDict.values(players)
-    |> Enum.all? fn player -> player.ready end
+    players |> Enum.all? fn {_name, player} -> player.ready end
   end
 
-  defp set_all_players_not_ready(players) do
-    for {n, p} <- players, into: HashDict.new, do: {n, %Player{p | ready: false}}
-  end
-
-  defp reset_players_for_round(players) do
-    for {n, p} <- players,
-      into: HashDict.new,
-      do: {n, %Player{p |
-                      ready: false,
-                      round_distance: nil,
-                      round_time: nil,
-                      round_points: nil}}
-  end
-
-  defp reset_players_for_game(players) do
-    for {n, p} <- players,
-      into: HashDict.new,
-      do: {n, %Player{p | ready: false, points: 0}}
+  defp update_players(players, fields) do
+    for {n, p} <- players, into: HashDict.new, do: {n, struct(p, fields)}
   end
 end
