@@ -104,10 +104,11 @@ defmodule Pinpointr.GameServer do
 
         players = HashDict.update! state.players, name, fn p ->
           %Player{p |
-          round_distance: distance,
-          round_time: time_used,
-          round_points: points,
-          points: p.points + points}
+                  ready: true,
+                  round_distance: distance,
+                  round_time: time_used,
+                  round_points: points,
+                  points: p.points + points}
         end
 
         {lat, lng} = state.current_loc.latlng.coordinates
@@ -209,10 +210,7 @@ defmodule Pinpointr.GameServer do
                       %{game_state: state.game_state,
                         players: HashDict.values(players)})
 
-    next_gs = case length(state.locs) do
-      0 -> :game_ended
-      _ -> :round_starting
-    end
+    next_gs = if length(state.locs) == 0 do :game_ended else :round_starting end
 
     %{state |
       countdown: Countdown.start(10, next_gs),
