@@ -1,7 +1,3 @@
-html {
-    overflow-y: scroll; 
-},
-
 .scoreboard table {
   table-layout: fixed;
 }

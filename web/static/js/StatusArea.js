@@ -5,7 +5,7 @@ let StatusArea = React.createClass({
     let hasPinpointed = !!this.props.roundTimeUsed;
 
       var colorClass = "alert-success";
-      if (!hasPinpointed && this.props.countdown) {
+      if (!hasPinpointed && this.props.gameState === "round_started") {
         if (this.props.countdown < 7) {
           colorClass = "alert-warning";
         }
@@ -39,13 +39,17 @@ let StatusArea = React.createClass({
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-1 col-sm-2 col-xs-3">
-                <Countdown countdown={this.props.countdown} colorize={!this.props.roundTimeUsed} />
+                <Countdown countdown={this.props.countdown} 
+                           colorize={!this.props.roundTimeUsed}
+                           hidden={this.props.gameState !== "round_started"} />
               </div>
               <div className="col-md-10 col-sm-8 col-xs-6 text-center">
                 {messageContent}
               </div>
               <div className="col-md-1 col-sm-2 col-xs-3 text-right">
-                <Countdown countdown={this.props.countdown} colorize={!this.props.roundTimeUsed} />
+                <Countdown countdown={this.props.countdown} 
+                           colorize={!this.props.roundTimeUsed}
+                           hidden={this.props.gameState !== "round_started"} />
               </div>
             </div>
           </div>
