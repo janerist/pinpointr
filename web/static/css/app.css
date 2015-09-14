@@ -2,18 +2,6 @@ html {
     overflow-y: scroll; 
 },
 
-.chatAnnouncement {
-    font-weight: bold;
-}
-
-.chatFrom {
-    font-weight: bold;
-}
-
-.chatScroll {
-    overflow-y: auto;
-}
-
 .scoreboard table {
   table-layout: fixed;
 }

@@ -4,7 +4,6 @@ let StatusArea = React.createClass({
   render() {
     let hasPinpointed = !!this.props.roundTimeUsed;
 
-    if (this.props.gameState === "round_started") {
       var colorClass = "alert-success";
       if (!hasPinpointed && this.props.countdown) {
         if (this.props.countdown < 7) {
@@ -52,9 +51,6 @@ let StatusArea = React.createClass({
           </div>
         </div>
       );
-    } else {
-      return (<div></div>)
-    }
   }
 });
 

@@ -10,15 +10,15 @@ defmodule Pinpointr.RoomChannel do
   def join("rooms:" <> _room_id, %{"name" => name}, socket) do
     game = get_game(socket.topic)
     case GameServer.add_player(game, name) do
-      {:ok, player} -> 
-        send(self, {:after_join, game, player})
-        {:ok, GameServer.get_state(game), assign(socket, :name, name)}
-
       {:error, :name_taken} ->
         {:error, %{"reason" => "Name is taken. Please choose another one."}}
 
       {:error, :name_too_long} ->
         {:error, %{"reason" => "Name is too long. Max 20 characters please."}}
+
+      {:ok, player} -> 
+        send(self, {:after_join, game, player})
+        {:ok, GameServer.get_state(game), assign(socket, :name, name)}
     end
   end
 
@@ -33,12 +33,6 @@ defmodule Pinpointr.RoomChannel do
 
   # Message handlers 
   # --------------------------------------------------------------------------
-  def handle_in("chat:message", %{"message" => message}, socket) do
-    broadcast!(socket, "chat:message", %{from: socket.assigns[:name], 
-                                         message: message})
-    {:noreply, socket}
-  end
-
   def handle_in("player:ready", %{"ready" => ready}, socket) do
     game = get_game(socket.topic)
     player = GameServer.update_player_fields(game, 

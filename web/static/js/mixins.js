@@ -11,7 +11,7 @@ export let SetFullHeightMixin = {
   handleResize() {
     let $domNode = $(this.getDOMNode());
     let offset = $domNode.offset();
-    $domNode.height($(window).height() - offset.top - 10);
+    $domNode.height($(window).height() - offset.top);
   }
 };
 

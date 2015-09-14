@@ -2,7 +2,6 @@ import {Socket} from "deps/phoenix/web/static/js/phoenix";
 import NameInputModal from "./NameInputModal";
 import Map from "./Map";
 import Scoreboard from "./Scoreboard";
-import Chat from "./Chat";
 import StatusArea from "./StatusArea";
 import CountdownModal from "./CountdownModal";
 
@@ -54,7 +53,6 @@ let Room = React.createClass({
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
         channel.on("player:updated", this.playerUpdated);
-        channel.on("chat:message", this.refs.chat.addMessage);
         channel.on("game:gameStarting", this.gameStarting);
         channel.on("game:roundStarting", this.roundStarting);
         channel.on("game:roundStarted", this.roundStarted);
@@ -72,20 +70,12 @@ let Room = React.createClass({
     this.setState(update(this.state, {
       players: {$push: [player]}
     }));
-
-    this.refs.chat.addMessage({
-      message: `${player.name} has joined the room.`
-    });
   },
 
   playerLeft({player}) {
     this.setState(update(this.state, {
       players: {$set: this.state.players.filter(p => p.name !== player.name)}
     }));
-
-    this.refs.chat.addMessage({
-      message: `${player.name} has left the room.`
-    });
   },
 
   playerUpdated({player}) {
@@ -147,14 +137,6 @@ let Room = React.createClass({
     }));
   },
 
-  handleMessageSubmitted(message) {
-    if (!message) {
-      return;
-    }
-
-    this.channel.push("chat:message", {message: message});
-  },
-
   handleToggleReady() {
     let ready = !this.state.ready;
     this.setState(update(this.state, {
@@ -181,12 +163,9 @@ let Room = React.createClass({
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-lg-9">
+          <div className="col-lg-12">
             <StatusArea ref="status" {...this.state} />
             <Map ref="map" zxy={this.props.zxy} pinpointed={this.handlePinpoint} />
-          </div>
-          <div className="col-lg-3">
-            <Chat ref="chat" messageSubmitted={this.handleMessageSubmitted} />
           </div>
         </div>
         <NameInputModal ref="nameModal" nameSubmitted={this.join} />
