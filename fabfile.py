@@ -9,6 +9,9 @@ APP_DIR = '/home/janerist/apps/pinpointr'
 
 def deploy():
     sync_changes()
+
+    sudo('supervisorctl stop pinpointr')
+
     with cd(APP_DIR):
         run("mix deps.get --only prod")
         run("MIX_ENV=prod mix compile")
@@ -16,7 +19,7 @@ def deploy():
         run("brunch build")
         run("MIX_ENV=prod mix phoenix.digest")
 
-    sudo('supervisorctl restart pinpointr')
+    sudo('supervisorctl start pinpointr')
 
 
 def sync_changes():
