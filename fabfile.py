@@ -16,6 +16,7 @@ def deploy():
         run("mix deps.get --only prod")
         run("MIX_ENV=prod mix compile")
         run("MIX_ENV=prod mix ecto.migrate")
+        run("npm install")
         run("brunch build")
         run("MIX_ENV=prod mix phoenix.digest")
 
