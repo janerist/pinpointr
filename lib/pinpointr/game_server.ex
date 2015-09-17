@@ -171,7 +171,7 @@ defmodule Pinpointr.GameServer do
 
   defp handle_gs_changed(:round_starting, state) do
     players = update_players state.players, ready: false, 
-                                            rounds_distance: nil, 
+                                            round_distance: nil, 
                                             round_time: nil, 
                                             round_points: nil
 
