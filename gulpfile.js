@@ -64,16 +64,17 @@ gulp.task("assets", function() {
 		.pipe(gulp.dest(config.paths.output));
 });
 
-gulp.task("watch", function() {
-	gulp.watch(config.paths.js, ["js"]);
-	gulp.watch(config.paths.css, ["css"])
-});
-
-gulp.task("default", [
+gulp.task("build", [
   "js", 
   "css", 
   "fonts", 
   "images", 
   "assets", 
-  "watch"
 ]);
+
+gulp.task("watch", function() {
+	gulp.watch(config.paths.js, ["js"]);
+	gulp.watch(config.paths.css, ["css"])
+});
+
+gulp.task("default", ["build", "watch"]);
