@@ -6,6 +6,7 @@ var browserify = require("browserify");
 var reactify = require("reactify");
 var babelify = require("babelify");
 var source = require("vinyl-source-stream");
+var addSrc = require("gulp-add-src");
 
 var config = {
 	paths: {
@@ -18,6 +19,15 @@ var config = {
 			"node_modules/leaflet/dist/leaflet.css",
 			"node_modules/drmonty-leaflet-awesome-markers/css/leaflet.awesome-markers.css",
 			"./web/static/css/**/*.css"
+		],
+		cssImages: [
+			"node_modules/drmonty-leaflet-awesome-markers/css/**/*.png"
+		],
+		fonts: [
+			"node_modules/bootstrap/dist/fonts/*.*"
+		],
+		images: [
+			"node_modules/leaflet/dist/images/*.*"
 		]
 	}
 };
@@ -35,7 +45,18 @@ gulp.task("js", function() {
 gulp.task("css", function() {
 	gulp.src(config.paths.css)
 		.pipe(concat("app.css"))
+		.pipe(addSrc(config.paths.cssImages))
 		.pipe(gulp.dest(config.paths.output + "/css"));
+});
+
+gulp.task("fonts", function() {
+	gulp.src(config.paths.fonts)
+		.pipe(gulp.dest(config.paths.output + "/fonts"));
+});
+
+gulp.task("images", function() {
+	gulp.src(config.paths.images)
+		.pipe(gulp.dest(config.paths.output + "/images"))
 });
 
 gulp.task("assets", function() {
@@ -48,4 +69,11 @@ gulp.task("watch", function() {
 	gulp.watch(config.paths.css, ["css"])
 });
 
-gulp.task("default", ["js", "css", "assets", "watch"]);
+gulp.task("default", [
+  "js", 
+  "css", 
+  "fonts", 
+  "images", 
+  "assets", 
+  "watch"
+]);
