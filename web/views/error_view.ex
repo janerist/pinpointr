@@ -5,6 +5,10 @@ defmodule Pinpointr.ErrorView do
     "Page not found"
   end
 
+  def render("404.json", _assigns) do
+    nil
+  end
+
   def render("500.html", _assigns) do
     "Server internal error"
   end

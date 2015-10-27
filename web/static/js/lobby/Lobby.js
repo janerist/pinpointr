@@ -1,47 +1,45 @@
-import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix";
-import React from "react";
-import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix"
+import React from "react"
+import {Link} from "react-router"
+import {OverlayTrigger, Tooltip} from "react-bootstrap"
 
-let RoomTooltip = React.createClass({
+const RoomTooltip = React.createClass({
   render() {
     if (this.props.players.length) {
       return (
-        <ul className="list-unstyled">
+        <ul className="list-unstyled" style={{textAlign: "left"}}>
           {this.props.players.map(player => {
             return (
               <li key={player.name}>
                 <i className="glyphicon glyphicon-user"></i> {player.name}
               </li>
-            );
+            )
           })}
         </ul>
       );
     } else {
-      return <span>Empty</span>;
+      return <span>Empty</span>
     }
   }
-});
+})
 
-let RoomNode = React.createClass({
+const RoomNode = React.createClass({
   render() {
-    let url = "rooms/" + this.props.id;
+    let url = "rooms/" + this.props.id
     return (
       <li>
         <OverlayTrigger placement="bottom" overlay={<Tooltip id={this.props.id}><RoomTooltip {...this.props} /></Tooltip>}>
-          <a href={url}
-             className="btn btn-primary btn-lg"
-             ref="roomButton">
+          <Link to={`/rooms/${this.props.id}`} className="btn btn-primary btn-large">
             <h4>{this.props.name}</h4>
-            <i className="glyphicon glyphicon-user"></i>
-          &nbsp;{this.props.players.length}
-          </a>
+            <i className="glyphicon glyphicon-user" /> {this.props.players.length}
+          </Link>
         </OverlayTrigger>
       </li>
-    );
+    )
   }
-});
+})
 
-let RoomList = React.createClass({
+const RoomList = React.createClass({
   render() {
     return (
       <ul className="list-unstyled">
@@ -51,40 +49,50 @@ let RoomList = React.createClass({
           );
         })}
       </ul>
-    );
+    )
   }
-});
+})
 
-let Lobby = React.createClass({
+const Lobby = React.createClass({
   getInitialState() {
     return { 
       rooms: []
-    };
+    }
   },
 
   componentDidMount() {
-    let socket = new Socket("/socket");
-    socket.connect();
-    let channel = socket.channel("lobby");
+    let socket = new Socket("/socket")
+    socket.connect()
+    let channel = socket.channel("lobby")
     channel.join()
       .receive("ok", response => {
-        this.setState(response);
-      });
+        this.setState(response)
+      })
 
     channel.on("room:updated", payload => {
       this.setState({
         rooms: this.state.rooms
         .filter(r => r.id !== payload.room.id)
         .concat(payload.room)
-      });
-    });
+      })
+    })
+
+    this.socket = socket
+  },
+
+  componentWillUnmount() {
+    if (this.socket) {
+      this.socket.disconnect()
+    }
   },
 
   render() {
     return (
-      <div className="jumbotron text-center">
-        <h4>Join a room to play!</h4>
-        <RoomList rooms={this.state.rooms} />
+      <div className="container">
+        <div className="jumbotron text-center">
+          <h4>Join a room to play!</h4>
+          <RoomList rooms={this.state.rooms} />
+        </div>
       </div>
     );
   }

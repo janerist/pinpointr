@@ -1,15 +1,19 @@
-import {Socket} from "deps/phoenix/web/static/js/phoenix";
-import NameInputModal from "./NameInputModal";
-import Map from "./Map";
-import Scoreboard from "./Scoreboard";
-import StatusArea from "./StatusArea";
-import CountdownModal from "./CountdownModal";
+import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix"
+import React from "react"
+import update from "react-addons-update"
+import NameInputModal from "./NameInputModal"
+import Map from "./Map"
+import Scoreboard from "./Scoreboard"
+import StatusArea from "./StatusArea"
+import CountdownModal from "./CountdownModal"
+import $ from "jquery"
 
-let update = React.addons.update;
-
-let Room = React.createClass({
+const Room = React.createClass({
   getInitialState() {
     return { 
+      id: null,
+      name: null,
+      zxy: null,
       players: [],
       gameState: "waiting_for_players",
       countdown: null,
@@ -20,11 +24,25 @@ let Room = React.createClass({
       roundTimeUsed: null,
       roundDistance: null,
       roundPoints: null
-    };
+    }
   },
 
   componentDidMount() {
-    this.refs.nameModal.open();
+    this.refs.nameModal.open()
+
+    $.getJSON(`/api/rooms/${this.props.params.id}`, room => 
+      this.setState(update(this.state, {
+        id: {$set: room.id},
+        name: {$set: room.name},
+        zxy: {$set: room.zxy}
+      }))
+    )
+  },
+
+  componentWillUnmount() {
+    if (this.socket) {
+      this.socket.disconnect()
+    }
   },
 
   join(name) {
@@ -34,7 +52,7 @@ let Room = React.createClass({
 
     var socket = new Socket("/socket");
     socket.connect();
-    let channel = socket.channel("rooms:" + this.props.id, {name: name});
+    let channel = socket.channel("rooms:" + this.state.id, {name: name});
 
     channel.join()
       .receive("ok", roomState => {
@@ -164,8 +182,16 @@ let Room = React.createClass({
       <div className="container-fluid">
         <div className="row">
           <div className="col-lg-12">
-            <StatusArea ref="status" {...this.state} />
-            <Map ref="map" zxy={this.props.zxy} pinpointed={this.handlePinpoint} />
+            {(() => {
+              if (this.state.id) {
+                return (
+                  <div>
+                    <StatusArea ref="status" {...this.state} />
+                    <Map ref="map" zxy={this.state.zxy} pinpointed={this.handlePinpoint} />
+                  </div>
+                )
+              }
+            }())}
           </div>
         </div>
         <NameInputModal ref="nameModal" nameSubmitted={this.join} />
@@ -176,7 +202,4 @@ let Room = React.createClass({
   }
 });
 
-React.render(
-  <Room {...window.__room} />,
-  document.getElementById("room")
-);
+export default Room;

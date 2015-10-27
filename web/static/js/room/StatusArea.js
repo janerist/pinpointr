@@ -1,3 +1,4 @@
+import React from "react";
 import Countdown from "./Countdown";
 
 let StatusArea = React.createClass({

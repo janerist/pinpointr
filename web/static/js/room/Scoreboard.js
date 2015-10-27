@@ -1,8 +1,10 @@
+import React from "react";
+
 export let GameStartingScoreboard = React.createClass({
   render() {
     return (
-      <div className="scoreboard panel panel-default">
-        <table className="table">
+      <div className="panel panel-default">
+        <table className="table" style={{tableLayout: "fixed"}}>
           <thead>
             <tr>
               <th>Name</th>
@@ -41,8 +43,8 @@ export let RoundStartingScoreboard = React.createClass({
 
   render() {
     return (
-      <div className="scoreboard panel panel-default">
-        <table className="table">
+      <div className="panel panel-default">
+        <table className="table" style={{tableLayout: "fixed"}}>
           <thead>
             <tr>
               <th>Name</th>
@@ -96,8 +98,8 @@ export let RoundFinishedScoreboard = React.createClass({
 
   render() {
     return (
-      <div className="scoreboard panel panel-default">
-        <table className="table">
+      <div className="panel panel-default">
+        <table className="table" style={{tableLayout: "fixed"}}>
           <thead>
             <tr>
               <th>Name</th>

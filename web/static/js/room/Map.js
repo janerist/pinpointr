@@ -1,4 +1,7 @@
-import {SetFullHeightMixin} from "./mixins";
+import React from "react"
+import {SetFullHeightMixin} from "../mixins"
+import L from "leaflet"
+import "drmonty-leaflet-awesome-markers"
 
 let Map = React.createClass({
   mixins: [SetFullHeightMixin],
@@ -23,8 +26,8 @@ let Map = React.createClass({
 
     this.map.on("dblclick", this.pinpoint);
 
-    let [z, x, y] = this.props.zxy.split("/");
-    this.map.setView([x, y], z);
+    let [z, x, y] = this.props.zxy.split("/")
+    this.map.setView([x, y], z)
   },
 
   pinpoint({latlng}) {
@@ -72,7 +75,7 @@ let Map = React.createClass({
 
   render() {
     return (
-      <div id="map"></div>
+      <div id="map" style={{cursor: "crosshair !important"}}></div>
     );
   }
 });

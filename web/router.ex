@@ -19,6 +19,11 @@ defmodule Pinpointr.Router do
     get "/", PageController, :index
   end
 
+  scope "/api", Pinpointr do
+    pipe_through :api
+
+    resources "/rooms", RoomController
+  end
 
   # Other scopes may use custom stacks.
   # scope "/api", Pinpointr do

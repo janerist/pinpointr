@@ -1,60 +1,57 @@
+import React from "react"
+import ReactDOM from "react-dom"
+import {Modal} from "react-bootstrap"
+
 let NameInputModal = React.createClass({
   getInitialState() {
     return { 
+      show: false,
       name: "" 
     };
   },
 
   handleChange(event) {
-    this.setState({name: event.target.value});
+    this.setState({name: event.target.value})
   },
 
   handleKeyUp(event) {
     if (event.key === "Enter") {
-      this.props.nameSubmitted(this.state.name);
+      this.props.nameSubmitted(this.state.name)
     }
   },
 
   open() {
-    $(this.getDOMNode()).modal({
-      backdrop: "static",
-      keyboard: false
-    });
-    React.findDOMNode(this.refs.nameInput).focus();
+    this.setState({show: true, name: this.state.name})
   },
 
   close() {
-    $(this.getDOMNode()).modal("hide");
+    this.setState({show: false, name: this.state.name})
   },
 
   render() {
     return (
-      <div className="modal fade" tabIndex="-1" role="dialog">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-body">
-              <label>Enter your name to join the room.</label>
-              <input 
-                type="text"
-                className="form-control"
-                ref="nameInput"
-                maxLength="20"
-                onKeyUp={this.handleKeyUp}
-                onChange={this.handleChange} />
-            </div>
-            <div className="modal-footer">
-              <button 
-                type="button"
-                className="btn btn-primary"
-                onClick={this.props.nameSubmitted.bind(null, this.state.name)}>
-                Join room
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+      <Modal show={this.state.show} onHide={this.close} backdrop="static" keyboard={false}>
+        <Modal.Body>
+          <label>Enter your name to join the room.</label>
+          <input 
+            type="text"
+            className="form-control"
+            ref={input => {if (input) {input.focus() }}}
+            maxLength="20"
+            onKeyUp={this.handleKeyUp}
+            onChange={this.handleChange} />
+        </Modal.Body>
+        <Modal.Footer>
+          <button 
+            type="button"
+            className="btn btn-primary"
+            onClick={this.props.nameSubmitted.bind(null, this.state.name)}>
+            Join room
+          </button>
+        </Modal.Footer>
+      </Modal>
+    )
   }
-});
+})
 
 export default NameInputModal;

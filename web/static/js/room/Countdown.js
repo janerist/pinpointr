@@ -1,4 +1,6 @@
-let Countdown = React.createClass({
+import React from "react";
+
+const Countdown = React.createClass({
 	render() {
 		var colorClass = "label-primary";
 
