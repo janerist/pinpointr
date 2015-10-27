@@ -1,6 +1,8 @@
-import {Socket} from "deps/phoenix/web/static/js/phoenix";
+import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix";
+import React from "react";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
-let RoomPopover = React.createClass({
+let RoomTooltip = React.createClass({
   render() {
     if (this.props.players.length) {
       return (
@@ -19,40 +21,41 @@ let RoomPopover = React.createClass({
     }
   }
 });
+
 let RoomNode = React.createClass({
-  componentDidMount() {
-    let el = $(React.findDOMNode(this.refs.roomButton));
-    el.popover({
-      html: true,
-      content: React.renderToString(<RoomPopover {...this.props} />),
-      placement: "bottom",
-      trigger: "hover"
-    });
-  },
-
-  componentDidUpdate() {
-    let el = $(React.findDOMNode(this.refs.roomButton));
-    $(el).data("bs.popover").options.content =
-      React.renderToString(<RoomPopover {...this.props} />);
-  },
-
   render() {
     let url = "rooms/" + this.props.id;
     return (
       <li>
-        <a href={url}
-           className="btn btn-primary btn-lg"
-           ref="roomButton">
-          <h4>{this.props.name}</h4>
-          <i className="glyphicon glyphicon-user"></i>
-        &nbsp;{this.props.players.length}
-        </a>
+        <OverlayTrigger placement="bottom" overlay={<Tooltip id={this.props.id}><RoomTooltip {...this.props} /></Tooltip>}>
+          <a href={url}
+             className="btn btn-primary btn-lg"
+             ref="roomButton">
+            <h4>{this.props.name}</h4>
+            <i className="glyphicon glyphicon-user"></i>
+          &nbsp;{this.props.players.length}
+          </a>
+        </OverlayTrigger>
       </li>
     );
   }
 });
 
 let RoomList = React.createClass({
+  render() {
+    return (
+      <ul className="list-unstyled">
+        {this.props.rooms.map(room => {
+          return (
+            <RoomNode key={room.id} {...room} />
+          );
+        })}
+      </ul>
+    );
+  }
+});
+
+let Lobby = React.createClass({
   getInitialState() {
     return { 
       rooms: []
@@ -78,23 +81,13 @@ let RoomList = React.createClass({
   },
 
   render() {
-
     return (
       <div className="jumbotron text-center">
         <h4>Join a room to play!</h4>
-        <ul className="list-unstyled">
-          {this.state.rooms.map(room => {
-            return (
-              <RoomNode key={room.id} {...room} />
-            );
-          })}
-        </ul>
+        <RoomList rooms={this.state.rooms} />
       </div>
     );
   }
-});
+})
 
-React.render(
-  <RoomList />,
-  document.getElementById("lobby")
-);
+export default Lobby;

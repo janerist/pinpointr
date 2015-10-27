@@ -16,8 +16,7 @@ defmodule Pinpointr.Router do
   scope "/", Pinpointr do
     pipe_through :browser # Use the default browser stack
 
-    get "/", RoomController, :index
-    get "/rooms/:id", RoomController, :room
+    get "/", PageController, :index
   end
 
 
