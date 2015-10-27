@@ -54,4 +54,4 @@ let NameInputModal = React.createClass({
   }
 })
 
-export default NameInputModal;
+export default NameInputModal

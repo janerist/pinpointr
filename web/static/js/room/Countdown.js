@@ -2,18 +2,18 @@ import React from "react";
 
 const Countdown = React.createClass({
 	render() {
-		var colorClass = "label-primary";
+		var colorClass = "label-primary"
 
 		if (this.props.colorize) {
 			if (this.props.countdown < 7) {
-				colorClass = "label-warning";
+				colorClass = "label-warning"
 			} 
 			if (this.props.countdown < 4) {
-				colorClass = "label-danger";
+				colorClass = "label-danger"
 			}
 		}
 
-		var maybeHidden = this.props.hidden ? "hide" : "";
+		var maybeHidden = this.props.hidden ? "hide" : ""
 		return (
 			<span className={"label " + colorClass + " " + maybeHidden}
 				  style={{fontSize: 16}}>
@@ -23,4 +23,4 @@ const Countdown = React.createClass({
 	}
 });
 
-export default Countdown;
+export default Countdown

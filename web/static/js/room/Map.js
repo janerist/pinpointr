@@ -11,28 +11,28 @@ let Map = React.createClass({
       doubleClickZoom: false
     });
 
-    this.reset();
+    this.reset()
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(this.map);
+    }).addTo(this.map)
   },
 
   reset() {
     if (this.pinpointLayerGroup) {
-      this.pinpointLayerGroup.clearLayers();
-      this.map.removeLayer(this.pinpointLayerGroup);
+      this.pinpointLayerGroup.clearLayers()
+      this.map.removeLayer(this.pinpointLayerGroup)
     }
 
-    this.map.on("dblclick", this.pinpoint);
+    this.map.on("dblclick", this.pinpoint)
 
     let [z, x, y] = this.props.zxy.split("/")
     this.map.setView([x, y], z)
   },
 
   pinpoint({latlng}) {
-    this.map.off("dblclick", this.pinpoint);
-    this.props.pinpointed([latlng.lat, latlng.lng]);
+    this.map.off("dblclick", this.pinpoint)
+    this.props.pinpointed([latlng.lat, latlng.lng])
   },
 
   handlePinpointReply(latlng, {time, distance, points, target_latlng}) {
@@ -70,7 +70,7 @@ let Map = React.createClass({
 
     pinpointMarker.openPopup();
 
-    this.map.fitBounds(new L.LatLngBounds([latlng, target_latlng]));
+    this.map.fitBounds(new L.LatLngBounds([latlng, target_latlng]))
   },
 
   render() {
@@ -80,4 +80,4 @@ let Map = React.createClass({
   }
 });
 
-export default Map; 
+export default Map 

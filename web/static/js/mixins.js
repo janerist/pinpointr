@@ -3,7 +3,7 @@ import ReactDOM from "react-dom"
 
 export let SetFullHeightMixin = {
   componentDidMount() {
-    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("resize", this.handleResize)
     this.handleResize()
   },
 
@@ -16,4 +16,4 @@ export let SetFullHeightMixin = {
     let offset = $domNode.offset()
     $domNode.height($(window).height() - offset.top)
   }
-};
+}

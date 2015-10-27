@@ -1,22 +1,22 @@
-import React from "react";
-import Countdown from "./Countdown";
+import React from "react"
+import Countdown from "./Countdown"
 
 let StatusArea = React.createClass({
   render() {
-    let hasPinpointed = !!this.props.roundTimeUsed;
+    let hasPinpointed = !!this.props.roundTimeUsed
 
-      var colorClass = "alert-success";
+      var colorClass = "alert-success"
       if (!hasPinpointed && this.props.gameState === "round_started") {
         if (this.props.countdown < 7) {
-          colorClass = "alert-warning";
+          colorClass = "alert-warning"
         }
 
         if (this.props.countdown < 4) {
-          colorClass = "alert-danger";
+          colorClass = "alert-danger"
         }
       }
 
-      var messageContent;
+      var messageContent
       if (hasPinpointed) {
         messageContent = (
           <div style={{ fontWeight: "bold" }}>
@@ -25,14 +25,14 @@ let StatusArea = React.createClass({
               +{this.props.roundPoints} points
             </p>
           </div>
-        );
+        )
       } else {
         messageContent = (
           <div style={{ fontWeight: "bold", fontSize: 18 }}>
             Pinpoint "{this.props.currentLoc}"
             <p style={{fontSize: 9}}>(double-click to pinpoint)</p>
           </div>
-        );
+        )
       }
 
       return (
@@ -55,8 +55,8 @@ let StatusArea = React.createClass({
             </div>
           </div>
         </div>
-      );
+      )
   }
-});
+})
 
-export default StatusArea;
+export default StatusArea

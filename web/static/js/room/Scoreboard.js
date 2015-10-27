@@ -1,6 +1,6 @@
-import React from "react";
+import React from "react"
 
-export let GameStartingScoreboard = React.createClass({
+export const GameStartingScoreboard = React.createClass({
   render() {
     return (
       <div className="panel panel-default">
@@ -20,7 +20,7 @@ export let GameStartingScoreboard = React.createClass({
                   {player.ready ? "Ready" : "Not ready"}
                 </td>
               </tr>
-            );
+            )
           })}
           </tbody>
         </table>
@@ -29,16 +29,16 @@ export let GameStartingScoreboard = React.createClass({
   }
 });
 
-export let RoundStartingScoreboard = React.createClass({
+export const RoundStartingScoreboard = React.createClass({
   sort(players) {
     return players.sort(function(p1, p2) {
-      if (p1.points < p2.points) return 1;
-      if (p1.points > p2.points) return -1;
+      if (p1.points < p2.points) return 1
+      if (p1.points > p2.points) return -1
 
-      if (p1.name < p1.name) return -1;
-      if (p1.name > p2.name) return 1;
-      return 0;
-    });
+      if (p1.name < p1.name) return -1
+      if (p1.name > p2.name) return 1
+      return 0
+    })
   },
 
   render() {
@@ -62,38 +62,38 @@ export let RoundStartingScoreboard = React.createClass({
                 </td>
                 <td className="text-right">{player.points}</td>
               </tr>
-            );
+            )
           })}
           </tbody>
         </table>
       </div>
     );
   }
-});
+})
 
-export let RoundFinishedScoreboard = React.createClass({
+export const RoundFinishedScoreboard = React.createClass({
   sort(players) {
     return players.sort(function(p1, p2) {
-      let p1points = p1.round_points || 0;
-      let p2points = p2.round_points || 0;
+      let p1points = p1.round_points || 0
+      let p2points = p2.round_points || 0
 
-      if (p1points < p2points) return 1;
-      if (p1points > p2points) return -1;
+      if (p1points < p2points) return 1
+      if (p1points > p2points) return -1
 
-      let p1dist = p1.round_distance || 100000;
-      let p2dist = p2.round_distance || 100000;
+      let p1dist = p1.round_distance || 100000
+      let p2dist = p2.round_distance || 100000
 
-      if (p1dist < p2dist) return -1;
-      if (p1dist > p2dist) return 1;
+      if (p1dist < p2dist) return -1
+      if (p1dist > p2dist) return 1
 
-      if (p1.points < p2.points) return 1;
-      if (p1.points > p2.points) return -1;
+      if (p1.points < p2.points) return 1
+      if (p1.points > p2.points) return -1
 
-      if (p1.name < p1.name) return -1;
-      if (p1.name > p2.name) return 1;
+      if (p1.name < p1.name) return -1
+      if (p1.name > p2.name) return 1
 
-      return 0;
-    });
+      return 0
+    })
   },
 
   render() {
@@ -127,11 +127,11 @@ export let RoundFinishedScoreboard = React.createClass({
                   {player.round_points ? "+" + player.round_points : "-"}
                 </td>
               </tr>
-            );
+            )
           })}
           </tbody>
         </table>
       </div>
-    );
+    )
   }
-});
+})
