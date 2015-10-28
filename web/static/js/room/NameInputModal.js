@@ -1,13 +1,12 @@
 import React from "react"
-import ReactDOM from "react-dom"
 import {Modal} from "react-bootstrap"
 
-let NameInputModal = React.createClass({
+const NameInputModal = React.createClass({
   getInitialState() {
     return { 
       show: false,
       name: "" 
-    };
+    }
   },
 
   handleChange(event) {

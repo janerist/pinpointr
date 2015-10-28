@@ -3,7 +3,6 @@ import React from "react"
 import update from "react-addons-update"
 import NameInputModal from "./NameInputModal"
 import Map from "./Map"
-import Scoreboard from "./Scoreboard"
 import StatusArea from "./StatusArea"
 import CountdownModal from "./CountdownModal"
 import $ from "jquery"
@@ -119,7 +118,7 @@ const Room = React.createClass({
       ready: {$set: false}
     }))
 
-    this.refs.map.reset();
+    this.refs.map.reset()
   },
 
   roundStarted({game_state, players, loc}) {
@@ -156,7 +155,7 @@ const Room = React.createClass({
   },
 
   handleToggleReady() {
-    let ready = !this.state.ready;
+    let ready = !this.state.ready
     this.setState(update(this.state, {
       ready: {$set: ready}
     }))
@@ -172,7 +171,7 @@ const Room = React.createClass({
           roundTimeUsed: {$set: reply.time_used},
           roundDistance: {$set: reply.distance},
           roundPoints: {$set: reply.points}
-        }));
+        }))
         this.refs.map.handlePinpointReply(latlng, reply)
       })
   },
@@ -191,15 +190,15 @@ const Room = React.createClass({
                   </div>
                 )
               }
-            }())}
+            })()}
           </div>
         </div>
         <NameInputModal ref="nameModal" nameSubmitted={this.join} />
         <CountdownModal ref="countdownModal" {...this.state} 
           readyToggled={this.handleToggleReady} />
       </div>
-    );
+    )
   }
-});
+})
 
 export default Room

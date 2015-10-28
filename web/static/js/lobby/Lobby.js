@@ -16,7 +16,7 @@ const RoomTooltip = React.createClass({
             )
           })}
         </ul>
-      );
+      )
     } else {
       return <span>Empty</span>
     }
@@ -25,7 +25,6 @@ const RoomTooltip = React.createClass({
 
 const RoomNode = React.createClass({
   render() {
-    let url = "rooms/" + this.props.id
     return (
       <li>
         <OverlayTrigger placement="bottom" overlay={<Tooltip id={this.props.id}><RoomTooltip {...this.props} /></Tooltip>}>
@@ -46,7 +45,7 @@ const RoomList = React.createClass({
         {this.props.rooms.map(room => {
           return (
             <RoomNode key={room.id} {...room} />
-          );
+          )
         })}
       </ul>
     )
@@ -94,8 +93,8 @@ const Lobby = React.createClass({
           <RoomList rooms={this.state.rooms} />
         </div>
       </div>
-    );
+    )
   }
 })
 
-export default Lobby;
+export default Lobby

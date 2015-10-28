@@ -25,9 +25,9 @@ export const GameStartingScoreboard = React.createClass({
           </tbody>
         </table>
       </div>
-    );
+    )
   }
-});
+})
 
 export const RoundStartingScoreboard = React.createClass({
   sort(players) {
@@ -67,7 +67,7 @@ export const RoundStartingScoreboard = React.createClass({
           </tbody>
         </table>
       </div>
-    );
+    )
   }
 })
 

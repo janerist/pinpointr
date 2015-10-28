@@ -1,7 +1,7 @@
 import $ from "jquery"
 import ReactDOM from "react-dom"
 
-export let SetFullHeightMixin = {
+export const SetFullHeightMixin = {
   componentDidMount() {
     window.addEventListener("resize", this.handleResize)
     this.handleResize()
