@@ -62,6 +62,8 @@ const CountdownModal = React.createClass({
       <Modal show={this.state.show}
              onHide={() => this.setState({show: false})}
              bsSize="lg"
+             keyboard={false}
+             backdrop="static"
              style={{overflowY: "initial !important"}}>
         <Modal.Header>
           <div className="container-fluid">
