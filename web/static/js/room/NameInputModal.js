@@ -28,7 +28,10 @@ const NameInputModal = React.createClass({
 
   render() {
     return (
-      <Modal show={this.state.show} onHide={this.close} backdrop="static" keyboard={false}>
+      <Modal show={this.state.show}
+             onHide={this.close}
+             backdrop="static"
+             keyboard={false}>
         <Modal.Body>
           <form onSubmit={this.handleSubmit}>
             <p>

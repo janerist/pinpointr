@@ -32,7 +32,7 @@ var config = {
 }
 
 gulp.task("js", function() {
-  browserify(config.paths.appJs)
+  browserify(config.paths.appJs, {debug: true})
     .transform(babelify)
     .transform(reactify)
     .bundle()

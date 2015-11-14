@@ -184,10 +184,13 @@ const Room = React.createClass({
             {(() => {
               if (this.state.id) {
                 return (
-                  <div>
-                    <StatusArea ref="status" {...this.state}>
+                  <div className="panel panel-default">
+                    <div className="panel-heading">
+                      <StatusArea ref="status" {...this.state} />
+                    </div>
+                    <div className="panel-body">
                       <Map ref="map" zxy={this.state.zxy} pinpointed={this.handlePinpoint} />
-                    </StatusArea>
+                    </div>
                   </div>
                 )
               }

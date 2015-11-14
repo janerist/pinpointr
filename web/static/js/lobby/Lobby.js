@@ -87,8 +87,8 @@ const Lobby = React.createClass({
 
   render() {
     return (
-      <div className="container">
-        <div className="jumbotron">
+      <div className="jumbotron">
+        <div className="container">
           <h1>pinpointr</h1>
           <h4>Join a room to play!</h4>
 
