@@ -117,8 +117,8 @@ export const RoundFinishedScoreboard = React.createClass({
                 <td className="text-right">
                   {player.round_distance ? Math.round(player.round_distance) + "m" : "-"}
                 </td>
-                <td className="text-right" style={{ color: "green" }}>
-                  {player.round_points ? "+" + player.round_points : "-"}
+                <td className="text-right" style={{ color: player.round_points ? "green" : "inherit" }}>
+                  {player.round_points ? "+" + player.round_points : "0"}
                 </td>
               </tr>
             )
