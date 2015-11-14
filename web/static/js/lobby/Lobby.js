@@ -27,8 +27,12 @@ const RoomNode = React.createClass({
   render() {
     return (
       <li>
-        <OverlayTrigger placement="bottom" overlay={<Tooltip id={this.props.id}><RoomTooltip {...this.props} /></Tooltip>}>
-          <Link to={`/rooms/${this.props.id}`} className="btn btn-primary btn-large">
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip id={this.props.id}><RoomTooltip {...this.props} /></Tooltip>}>
+          <Link to={`/rooms/${this.props.id}`}
+                className="btn btn-primary btn-large btn-block"
+                style={{marginTop: 10}}>
             <h4>{this.props.name}</h4>
             <i className="glyphicon glyphicon-user" /> {this.props.players.length}
           </Link>
