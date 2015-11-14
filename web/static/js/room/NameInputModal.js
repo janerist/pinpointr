@@ -3,9 +3,9 @@ import {Modal} from "react-bootstrap"
 
 const NameInputModal = React.createClass({
   getInitialState() {
-    return { 
+    return {
       show: false,
-      name: "" 
+      name: ""
     }
   },
 
@@ -13,10 +13,9 @@ const NameInputModal = React.createClass({
     this.setState({name: event.target.value})
   },
 
-  handleKeyUp(event) {
-    if (event.key === "Enter") {
-      this.props.nameSubmitted(this.state.name)
-    }
+  handleSubmit(event) {
+    event.preventDefault()
+    this.props.nameSubmitted(this.state.name)
   },
 
   open() {
@@ -31,23 +30,27 @@ const NameInputModal = React.createClass({
     return (
       <Modal show={this.state.show} onHide={this.close} backdrop="static" keyboard={false}>
         <Modal.Body>
-          <label>Enter your name to join the room.</label>
-          <input 
-            type="text"
-            className="form-control"
-            ref={input => {if (input) {input.focus() }}}
-            maxLength="20"
-            onKeyUp={this.handleKeyUp}
-            onChange={this.handleChange} />
+          <form onSubmit={this.handleSubmit}>
+            <p>
+              Enter your name to join the room.
+            </p>
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                ref={input => {if (input) {input.focus() }}}
+                maxLength="20"
+                onChange={this.handleChange} />
+              <span className="input-group-btn">
+                <button
+                  type="submit"
+                  className="btn btn-primary">
+                  Join room
+                </button>
+              </span>
+            </div>
+          </form>
         </Modal.Body>
-        <Modal.Footer>
-          <button 
-            type="button"
-            className="btn btn-primary"
-            onClick={this.props.nameSubmitted.bind(null, this.state.name)}>
-            Join room
-          </button>
-        </Modal.Footer>
       </Modal>
     )
   }

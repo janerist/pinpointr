@@ -16,7 +16,7 @@ const Countdown = React.createClass({
     var maybeHidden = this.props.hidden ? "hide" : ""
     return (
       <span className={"label " + colorClass + " " + maybeHidden}
-            style={{fontSize: 16}}>
+            style={{fontSize: this.props.size || 16}}>
 				{this.props.countdown}
 			</span>
     )

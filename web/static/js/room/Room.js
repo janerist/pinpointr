@@ -185,8 +185,9 @@ const Room = React.createClass({
               if (this.state.id) {
                 return (
                   <div>
-                    <StatusArea ref="status" {...this.state} />
-                    <Map ref="map" zxy={this.state.zxy} pinpointed={this.handlePinpoint} />
+                    <StatusArea ref="status" {...this.state}>
+                      <Map ref="map" zxy={this.state.zxy} pinpointed={this.handlePinpoint} />
+                    </StatusArea>
                   </div>
                 )
               }

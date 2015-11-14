@@ -52,7 +52,7 @@ const CountdownModal = React.createClass({
     if (this.props.ready) {
       btnClasses += " btn-danger"
     } else {
-      btnClasses += " btn-success"
+      btnClasses += " btn-primary"
     }
 
     var scoreboard = this.getScoreboard()
@@ -78,7 +78,7 @@ const CountdownModal = React.createClass({
             </div>
           </div>
         </Modal.Header>
-        <Modal.Body style={{ height: "50vh", overflowY: "scroll"}}>
+        <Modal.Body style={{ height: "50vh", overflowY: "auto"}}>
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-12">

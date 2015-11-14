@@ -4,7 +4,7 @@ export const GameStartingScoreboard = React.createClass({
   render() {
     return (
       <div className="panel panel-default">
-        <table className="table" style={{tableLayout: "fixed"}}>
+        <table className="table table-condensed" style={{tableLayout: "fixed"}}>
           <thead>
             <tr>
               <th>Name</th>
@@ -44,7 +44,7 @@ export const RoundStartingScoreboard = React.createClass({
   render() {
     return (
       <div className="panel panel-default">
-        <table className="table" style={{tableLayout: "fixed"}}>
+        <table className="table table-condensed" style={{tableLayout: "fixed"}}>
           <thead>
             <tr>
               <th>Name</th>
@@ -54,12 +54,8 @@ export const RoundStartingScoreboard = React.createClass({
           <tbody>
           {this.sort(this.props.players).map(player => {
             return (
-              <tr key={player.name}>
-                <td>
-                  <span style={{color: player.ready ? "green" : "initial" }}>
-                    {player.name}
-                  </span>
-                </td>
+              <tr key={player.name} className={player.ready ? "success" : ""}>
+                <td>{player.name}</td>
                 <td className="text-right">{player.points}</td>
               </tr>
             )
@@ -99,7 +95,7 @@ export const RoundFinishedScoreboard = React.createClass({
   render() {
     return (
       <div className="panel panel-default">
-        <table className="table" style={{tableLayout: "fixed"}}>
+        <table className="table table-condensed" style={{tableLayout: "fixed"}}>
           <thead>
             <tr>
               <th>Name</th>
@@ -111,11 +107,9 @@ export const RoundFinishedScoreboard = React.createClass({
           <tbody>
           {this.sort(this.props.players).map(player => {
             return (
-              <tr key={player.name}>
+              <tr key={player.name} className={player.ready ? "success" : ""}>
                 <td>
-                  <span style={{color: player.ready ? "green" : "initial" }}>
-                    {player.name}
-                  </span>
+                  {player.name}
                 </td>
                 <td className="text-right">
                   {player.round_time ? Math.round(player.round_time / 1000) + "s" : "-"}

@@ -12,16 +12,7 @@
   </head>
 
   <body>
-      <div class="container-fluid">
-          <div class="header clearfix">
-              <h3 class="text-muted">
-                  Pinpointr
-                  <small style="color: red;">alpha</small>
-              </h3>
-          </div>
-      </div>
       <%= @inner %>
-
       <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
       <%=raw(render_existing view_module(@conn), "scripts." <> view_template(@conn), assigns) %>
   </body>

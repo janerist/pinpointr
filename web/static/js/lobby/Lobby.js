@@ -88,9 +88,15 @@ const Lobby = React.createClass({
   render() {
     return (
       <div className="container">
-        <div className="jumbotron text-center">
+        <div className="jumbotron">
+          <h1>pinpointr</h1>
           <h4>Join a room to play!</h4>
+
+          <hr />
+          
           <RoomList rooms={this.state.rooms} />
+
+          <hr />
         </div>
       </div>
     )

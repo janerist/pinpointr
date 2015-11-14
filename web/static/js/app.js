@@ -3,12 +3,16 @@ import Room from "./room/Room"
 import React from "react"
 import {render} from "react-dom"
 import {Router, Route, IndexRoute} from "react-router"
+import NavBar from "./NavBar"
 
 const App = React.createClass({
   render() {
     return (
-      <div className="container-fluid">
-        {this.props.children}
+      <div>
+        <NavBar />
+        <div className="container-fluid">
+          {this.props.children}
+        </div>
       </div>
     )
   }

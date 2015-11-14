@@ -14,7 +14,7 @@ var config = {
     output: "./priv/static",
     assets: "./web/static/assets/**/*.*",
     css: [
-      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "node_modules/bootswatch/darkly/bootstrap.min.css",
       "node_modules/leaflet/dist/leaflet.css",
       "node_modules/drmonty-leaflet-awesome-markers/css/leaflet.awesome-markers.css",
       "./web/static/css/**/*.css"
