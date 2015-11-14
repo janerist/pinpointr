@@ -18,7 +18,7 @@ const StatusArea = React.createClass({
       messageContent = (
         <h4>
           Pinpoint "{this.props.currentLoc}"<br />
-          <small>double-click to pinpoint</small>
+          <small>double-{"ontouchstart" in window ? "tap" : "click"} to pinpoint</small>
         </h4>
       )
     }
