@@ -15,6 +15,10 @@ defmodule Pinpointr.RoomRegistry do
     GenServer.call(server, {:create, room_id, room_name})
   end
 
+  def get_all(server) do
+    GenServer.call(server, {:get_all})
+  end
+
   # Server callbacks
   def init(:ok) do
     {:ok, HashDict.new}
@@ -31,5 +35,9 @@ defmodule Pinpointr.RoomRegistry do
       {:ok, game} = GameServer.start_link(room_id, room_name)
       {:reply, game, HashDict.put(rooms, room_id, game)}
     end
+  end
+
+  def handle_call({:get_all}, _from, rooms) do
+    {:reply, HashDict.values(rooms), rooms}
   end
 end
