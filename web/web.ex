@@ -18,7 +18,10 @@ defmodule Pinpointr.Web do
 
   def model do
     quote do
-      use Ecto.Model
+      use Ecto.Schema
+
+      import Ecto.Changeset
+      import Ecto.Query, only: [from: 1, from: 2]
     end
   end
 
@@ -27,7 +30,7 @@ defmodule Pinpointr.Web do
       use Phoenix.Controller
 
       alias Pinpointr.Repo
-      import Ecto.Model
+      import Ecto.Schema
       import Ecto.Query, only: [from: 2]
 
       import Pinpointr.Router.Helpers
@@ -59,7 +62,7 @@ defmodule Pinpointr.Web do
       use Phoenix.Channel
 
       alias Pinpointr.Repo
-      import Ecto.Model
+      import Ecto.Schema
       import Ecto.Query, only: [from: 2]
     end
   end
