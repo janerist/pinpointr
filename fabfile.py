@@ -13,6 +13,7 @@ def deploy():
     sudo('supervisorctl stop pinpointr')
 
     with cd(APP_DIR):
+        run("mix deps.clean --all")
         run("mix deps.get --only prod")
         run("MIX_ENV=prod mix compile")
         run("MIX_ENV=prod mix ecto.migrate")
