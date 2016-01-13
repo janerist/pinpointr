@@ -1,29 +1,29 @@
-import React from "react"
-import {Modal} from "react-bootstrap"
+import React from "react";
+import {Modal} from "react-bootstrap";
 
 const NameInputModal = React.createClass({
   getInitialState() {
     return {
       show: false,
       name: ""
-    }
+    };
   },
 
   handleChange(event) {
-    this.setState({name: event.target.value})
+    this.setState({name: event.target.value});
   },
 
   handleSubmit(event) {
-    event.preventDefault()
-    this.props.nameSubmitted(this.state.name)
+    event.preventDefault();
+    this.props.nameSubmitted(this.state.name);
   },
 
   open() {
-    this.setState({show: true, name: this.state.name})
+    this.setState({show: true, name: this.state.name});
   },
 
   close() {
-    this.setState({show: false, name: this.state.name})
+    this.setState({show: false, name: this.state.name});
   },
 
   render() {
@@ -41,7 +41,7 @@ const NameInputModal = React.createClass({
               <input
                 type="text"
                 className="form-control"
-                ref={input => {if (input) {input.focus() }}}
+                ref={input => {if (input) {input.focus(); }}}
                 maxLength="20"
                 onChange={this.handleChange} />
               <span className="input-group-btn">
@@ -55,8 +55,8 @@ const NameInputModal = React.createClass({
           </form>
         </Modal.Body>
       </Modal>
-    )
+    );
   }
-})
+});
 
-export default NameInputModal
+export default NameInputModal;

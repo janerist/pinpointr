@@ -1,7 +1,7 @@
-import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix"
-import React from "react"
-import {Link} from "react-router"
-import {OverlayTrigger, Tooltip} from "react-bootstrap"
+import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix";
+import React from "react";
+import {Link} from "react-router";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 const RoomTooltip = React.createClass({
   render() {
@@ -13,15 +13,15 @@ const RoomTooltip = React.createClass({
               <li key={player.name}>
                 <i className="glyphicon glyphicon-user"></i> {player.name}
               </li>
-            )
+            );
           })}
         </ul>
-      )
+      );
     } else {
-      return <span>Empty</span>
+      return <span>Empty</span>;
     }
   }
-})
+});
 
 const RoomNode = React.createClass({
   render() {
@@ -38,9 +38,9 @@ const RoomNode = React.createClass({
           </Link>
         </OverlayTrigger>
       </li>
-    )
+    );
   }
-})
+});
 
 const RoomList = React.createClass({
   render() {
@@ -49,43 +49,43 @@ const RoomList = React.createClass({
         {this.props.rooms.map(room => {
           return (
             <RoomNode key={room.id} {...room} />
-          )
+          );
         })}
       </ul>
-    )
+    );
   }
-})
+});
 
 const Lobby = React.createClass({
   getInitialState() {
-    return { 
+    return {
       rooms: []
-    }
+    };
   },
 
   componentDidMount() {
-    let socket = new Socket("/socket")
-    socket.connect()
-    let channel = socket.channel("lobby")
+    let socket = new Socket("/socket");
+    socket.connect();
+    let channel = socket.channel("lobby");
     channel.join()
       .receive("ok", response => {
-        this.setState(response)
-      })
+        this.setState(response);
+      });
 
     channel.on("room:updated", payload => {
       this.setState({
         rooms: this.state.rooms
         .filter(r => r.id !== payload.room.id)
         .concat(payload.room)
-      })
-    })
+      });
+    });
 
-    this.socket = socket
+    this.socket = socket;
   },
 
   componentWillUnmount() {
     if (this.socket) {
-      this.socket.disconnect()
+      this.socket.disconnect();
     }
   },
 
@@ -97,14 +97,14 @@ const Lobby = React.createClass({
           <h4>Join a room to play!</h4>
 
           <hr />
-          
+
           <RoomList rooms={this.state.rooms} />
 
           <hr />
         </div>
       </div>
-    )
+    );
   }
-})
+});
 
-export default Lobby
+export default Lobby;

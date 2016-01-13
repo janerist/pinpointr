@@ -1,9 +1,9 @@
-import Lobby from "./lobby/Lobby"
-import Room from "./room/Room"
-import React from "react"
-import {render} from "react-dom"
-import {Router, Route, IndexRoute} from "react-router"
-import NavBar from "./NavBar"
+import Lobby from "./lobby/Lobby";
+import Room from "./room/Room";
+import React from "react";
+import {render} from "react-dom";
+import {Router, Route, IndexRoute} from "react-router";
+import NavBar from "./NavBar";
 
 const App = React.createClass({
   render() {
@@ -14,9 +14,9 @@ const App = React.createClass({
           {this.props.children}
         </div>
       </div>
-    )
+    );
   }
-})
+});
 
 render((
 	<Router>
@@ -25,4 +25,4 @@ render((
       <Route path="rooms/:id" component={Room} />
     </Route>
 	</Router>
-), document.getElementById("app"))
+), document.getElementById("app"));

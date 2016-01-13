@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 const NavBar = React.createClass({
   render() {
@@ -27,8 +27,8 @@ const NavBar = React.createClass({
           </div>
         </div>
       </nav>
-    )
+    );
   }
-})
+});
 
-export default NavBar
+export default NavBar;

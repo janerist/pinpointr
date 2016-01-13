@@ -1,10 +1,10 @@
-import React from "react"
-import Countdown from "./Countdown"
+import React from "react";
+import Countdown from "./Countdown";
 
 const StatusArea = React.createClass({
   render() {
-    let hasPinpointed = !!this.props.roundTimeUsed
-    var messageContent
+    let hasPinpointed = !!this.props.roundTimeUsed;
+    var messageContent;
     if (hasPinpointed) {
       messageContent = (
         <div style={{ fontWeight: "bold" }}>
@@ -13,14 +13,14 @@ const StatusArea = React.createClass({
             +{this.props.roundPoints} points
           </p>
         </div>
-      )
+      );
     } else {
       messageContent = (
         <h4>
           Pinpoint "{this.props.currentLoc}"<br />
           <small>double-{"ontouchstart" in window ? "tap" : "click"} to pinpoint</small>
         </h4>
-      )
+      );
     }
 
     return (
@@ -45,8 +45,8 @@ const StatusArea = React.createClass({
           </div>
         </div>
       </div>
-    )
+    );
   }
-})
+});
 
-export default StatusArea
+export default StatusArea;

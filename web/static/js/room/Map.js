@@ -1,38 +1,38 @@
-import React from "react"
-import {SetFullHeightMixin} from "../mixins"
-import L from "leaflet"
-import "drmonty-leaflet-awesome-markers"
+import React from "react";
+import {SetFullHeightMixin} from "../mixins";
+import L from "leaflet";
+import "drmonty-leaflet-awesome-markers";
 
 const Map = React.createClass({
   mixins: [SetFullHeightMixin],
-  
+
   componentDidMount() {
     this.map = L.map("map", {
       doubleClickZoom: false
-    })
+    });
 
-    this.reset()
+    this.reset();
 
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
       attribution: "&copy; <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors"
-    }).addTo(this.map)
+    }).addTo(this.map);
   },
 
   reset() {
     if (this.pinpointLayerGroup) {
-      this.pinpointLayerGroup.clearLayers()
-      this.map.removeLayer(this.pinpointLayerGroup)
+      this.pinpointLayerGroup.clearLayers();
+      this.map.removeLayer(this.pinpointLayerGroup);
     }
 
-    this.map.on("dblclick", this.pinpoint)
+    this.map.on("dblclick", this.pinpoint);
 
-    let [z, x, y] = this.props.zxy.split("/")
-    this.map.setView([x, y], z)
+    let [z, x, y] = this.props.zxy.split("/");
+    this.map.setView([x, y], z);
   },
 
   pinpoint({latlng}) {
-    this.map.off("dblclick", this.pinpoint)
-    this.props.pinpointed([latlng.lat, latlng.lng])
+    this.map.off("dblclick", this.pinpoint);
+    this.props.pinpointed([latlng.lat, latlng.lng]);
   },
 
   handlePinpointReply(latlng, {distance, points, target_latlng}) {
@@ -47,7 +47,7 @@ const Map = React.createClass({
       <p style="color: green; font-size: 16px;">
         +${points} points
       </p>
-    `, { closeButton: false})
+    `, { closeButton: false});
 
     let targetMarker = L.marker(target_latlng, {
       icon: L.AwesomeMarkers.icon({
@@ -55,29 +55,29 @@ const Map = React.createClass({
         markerColor: "red"
       }),
       clickable: false
-    })
+    });
 
     let line = L.polyline([latlng, target_latlng], {
       color: "red",
       clickable: false
-    })
+    });
 
     this.pinpointLayerGroup = L.layerGroup([
       pinpointMarker,
       targetMarker,
       line
-    ]).addTo(this.map)
+    ]).addTo(this.map);
 
-    pinpointMarker.openPopup()
+    pinpointMarker.openPopup();
 
-    this.map.fitBounds(new L.LatLngBounds([latlng, target_latlng]))
+    this.map.fitBounds(new L.LatLngBounds([latlng, target_latlng]));
   },
 
   render() {
     return (
       <div id="map" style={{cursor: "crosshair !important"}}></div>
-    )
+    );
   }
-})
+});
 
-export default Map 
+export default Map;
