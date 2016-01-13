@@ -1,4 +1,4 @@
-import {Socket} from "../../../../deps/phoenix/web/static/js/phoenix";
+import {Socket} from "phoenix";
 import React from "react";
 import {Link} from "react-router";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
