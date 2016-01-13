@@ -1,11 +1,10 @@
-var gulp = require("gulp")
-var concat = require("gulp-concat")
-var browserify = require("browserify")
-var reactify = require("reactify")
-var babelify = require("babelify")
-var source = require("vinyl-source-stream")
-var addSrc = require("gulp-add-src")
-var eslint = require("gulp-eslint")
+var gulp = require("gulp");
+var concat = require("gulp-concat");
+var browserify = require("browserify");
+var babelify = require("babelify");
+var source = require("vinyl-source-stream");
+var addSrc = require("gulp-add-src");
+var eslint = require("gulp-eslint");
 
 var config = {
   paths: {
@@ -29,45 +28,44 @@ var config = {
       "node_modules/leaflet/dist/images/*.*"
     ]
   }
-}
+};
 
 gulp.task("js", function() {
   browserify(config.paths.appJs, {debug: true})
-    .transform(babelify)
-    .transform(reactify)
+    .transform(babelify, {presets: ["es2015", "react"]})
     .bundle()
-    .on("error", console.error.bind(console))
+    .on("error", console.error.bind(console)) // eslint-disable-line no-console
     .pipe(source("app.js"))
-    .pipe(gulp.dest(config.paths.output + "/js"))
-})
+    .pipe(gulp.dest(config.paths.output + "/js"));
+});
 
 gulp.task("css", function() {
   gulp.src(config.paths.css)
     .pipe(concat("app.css"))
     .pipe(addSrc(config.paths.cssImages))
-    .pipe(gulp.dest(config.paths.output + "/css"))
-})
+    .pipe(gulp.dest(config.paths.output + "/css"));
+});
 
 gulp.task("fonts", function() {
   gulp.src(config.paths.fonts)
-    .pipe(gulp.dest(config.paths.output + "/fonts"))
-})
+    .pipe(gulp.dest(config.paths.output + "/fonts"));
+});
 
 gulp.task("images", function() {
   gulp.src(config.paths.images)
-    .pipe(gulp.dest(config.paths.output + "/images"))
-})
+    .pipe(gulp.dest(config.paths.output + "/images"));
+});
 
 gulp.task("assets", function() {
   gulp.src(config.paths.assets)
-    .pipe(gulp.dest(config.paths.output))
-})
+    .pipe(gulp.dest(config.paths.output));
+});
 
 gulp.task("lint", function() {
   return gulp.src(config.paths.js)
     .pipe(eslint({config: ".eslintrc"}))
-    .pipe(eslint.format())
-})
+    .pipe(eslint.format());
+});
 
 gulp.task("build", [
   "js",
@@ -75,11 +73,11 @@ gulp.task("build", [
   "fonts",
   "images",
   "assets"
-])
+]);
 
 gulp.task("watch", function() {
-  gulp.watch(config.paths.js, ["lint", "js"])
-  gulp.watch(config.paths.css, ["css"])
-})
+  gulp.watch(config.paths.js, ["lint", "js"]);
+  gulp.watch(config.paths.css, ["css"]);
+});
 
-gulp.task("default", ["lint", "build", "watch"])
+gulp.task("default", ["lint", "build", "watch"]);
