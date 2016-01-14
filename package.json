@@ -20,7 +20,6 @@
     "leaflet": "^0.7.7",
     "phoenix": "file:deps/phoenix",
     "react": "^0.14.6",
-    "react-addons-update": "^0.14.6",
     "react-bootstrap": "^0.28.2",
     "react-dom": "^0.14.6",
     "react-router": "^1.0.3",

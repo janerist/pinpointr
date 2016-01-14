@@ -1,6 +1,5 @@
 import {Socket} from "phoenix";
 import React from "react";
-import update from "react-addons-update";
 import NameInputModal from "./NameInputModal";
 import Map from "./Map";
 import StatusArea from "./StatusArea";
@@ -30,11 +29,11 @@ const Room = React.createClass({
     this.refs.nameModal.open();
 
     $.getJSON(`/api/rooms/${this.props.params.id}`, room =>
-      this.setState(update(this.state, {
-        id: {$set: room.id},
-        name: {$set: room.name},
-        zxy: {$set: room.zxy}
-      }))
+      this.setState({
+        id: room.id,
+        name: room.name,
+        zxy: room.zxy
+      })
     );
   },
 
@@ -59,13 +58,13 @@ const Room = React.createClass({
 
         this.socket = socket;
         this.channel = channel;
-        this.setState(update(this.state, {
-          players: {$set: roomState.players},
-          gameState: {$set: roomState.game_state},
-          numRounds: {$set: roomState.num_rounds},
-          round: {$set: roomState.round},
-          currentLoc: {$set: roomState.current_loc}
-        }));
+        this.setState({
+          players: roomState.players,
+          gameState: roomState.game_state,
+          numRounds: roomState.num_rounds,
+          round: roomState.round,
+          currentLoc: roomState.current_loc
+        });
 
         channel.on("player:joined", this.playerJoined);
         channel.on("player:left", this.playerLeft);
@@ -84,81 +83,81 @@ const Room = React.createClass({
   },
 
   playerJoined({player}) {
-    this.setState(update(this.state, {
-      players: {$push: [player]}
-    }));
+    this.setState({
+      players: this.state.players.concat(player)
+    });
   },
 
   playerLeft({player}) {
-    this.setState(update(this.state, {
-      players: {$set: this.state.players.filter(p => p.name !== player.name)}
-    }));
+    this.setState({
+      players: this.state.players.filter(p => p.name !== player.name)
+    });
   },
 
   playerUpdated({player}) {
-    this.setState(update(this.state, {
-      players: {$set: this.state.players.filter(p => p.name !== player.name).concat(player)}
-    }));
+    this.setState({
+      players: this.state.players.filter(p => p.name !== player.name).concat(player)
+    });
   },
 
   gameStarting({game_state, num_rounds, players}) {
-    this.setState(update(this.state, {
-      players: {$set: players},
-      gameState: {$set: game_state},
-      numRounds: {$set: num_rounds},
-      ready: {$set: false}
-    }));
+    this.setState({
+      players: players,
+      gameState: game_state,
+      numRounds: num_rounds,
+      ready: false
+    });
   },
 
   roundStarting({game_state, round, players}) {
-    this.setState(update(this.state, {
-      players: {$set: players},
-      gameState: {$set: game_state},
-      round: {$set: round},
-      ready: {$set: false}
-    }));
+    this.setState({
+      players: players,
+      gameState: game_state,
+      round: round,
+      ready: false
+    });
 
     this.refs.map.reset();
   },
 
   roundStarted({game_state, players, loc}) {
-    this.setState(update(this.state, {
-      players: {$set: players},
-      gameState: {$set: game_state},
-      currentLoc: {$set: loc}
-    }));
+    this.setState({
+      players: players,
+      gameState: game_state,
+      currentLoc: loc
+    });
   },
 
   roundFinished({game_state, players}) {
-    this.setState(update(this.state, {
-      players: {$set: players},
-      gameState: {$set: game_state},
-      ready: {$set: false},
-      roundTimeUsed: {$set: null},
-      roundDistance: {$set: null},
-      roundPoints: {$set: null}
-    }));
+    this.setState({
+      players: players,
+      gameState: game_state,
+      ready: false,
+      roundTimeUsed: null,
+      roundDistance: null,
+      roundPoints: null
+    });
   },
 
   gameEnded({game_state, players}) {
-    this.setState(update(this.state, {
-      players: {$set: players},
-      gameState: {$set: game_state},
-      ready: {$set: false}
-    }));
+    this.setState({
+      players: players,
+      gameState: game_state,
+      ready: false
+    });
   },
 
   countdown({countdown}) {
-    this.setState(update(this.state, {
-      countdown: {$set: countdown}
-    }));
+    this.setState( {
+      countdown: countdown
+    });
   },
 
   handleToggleReady() {
     let ready = !this.state.ready;
-    this.setState(update(this.state, {
-      ready: {$set: ready}
-    }));
+    this.setState( {
+      ready: ready
+    });
 
     this.channel.push("player:ready", {ready: ready});
   },
@@ -167,11 +166,11 @@ const Room = React.createClass({
     this.channel
       .push("player:pinpoint", {latlng: latlng})
       .receive("ok", reply => {
-        this.setState(update(this.state, {
-          roundTimeUsed: {$set: reply.time_used},
-          roundDistance: {$set: reply.distance},
-          roundPoints: {$set: reply.points}
-        }));
+        this.setState({
+          roundTimeUsed: reply.time_used,
+          roundDistance: reply.distance,
+          roundPoints: reply.points
+        });
         this.refs.map.handlePinpointReply(latlng, reply);
       });
   },
