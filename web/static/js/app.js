@@ -3,6 +3,7 @@ import Room from "./room/Room";
 import React from "react";
 import {render} from "react-dom";
 import {Router, Route, IndexRoute} from "react-router";
+import createBrowserHistory from "history/lib/createBrowserHistory";
 import NavBar from "./NavBar";
 
 const App = React.createClass({
@@ -19,7 +20,7 @@ const App = React.createClass({
 });
 
 render((
-	<Router>
+	<Router history={createBrowserHistory()}>
     <Route path="/" component={App}>
       <IndexRoute component={Lobby} />
       <Route path="rooms/:id" component={Room} />
