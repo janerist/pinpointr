@@ -18,7 +18,7 @@ def deploy():
         run("MIX_ENV=prod mix compile")
         run("MIX_ENV=prod mix ecto.migrate")
         run("npm install")
-        run("node node_modules/gulp/bin/gulp.js build")
+        run("NODE_ENV=prod node node_modules/gulp/bin/gulp.js build")
         run("MIX_ENV=prod mix phoenix.digest")
 
     sudo('supervisorctl start pinpointr')

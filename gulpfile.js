@@ -5,6 +5,9 @@ var babelify = require("babelify");
 var source = require("vinyl-source-stream");
 var addSrc = require("gulp-add-src");
 var eslint = require("gulp-eslint");
+var streamify = require("gulp-streamify");
+var uglify = require("gulp-uglify");
+var gulpif = require("gulp-if");
 
 var config = {
   paths: {
@@ -30,12 +33,15 @@ var config = {
   }
 };
 
+var debug = process.env.NODE_ENV !== "prod";
+
 gulp.task("js", function() {
-  browserify(config.paths.appJs, {debug: true})
+  browserify(config.paths.appJs, {debug: debug})
     .transform(babelify, {presets: ["es2015", "react"]})
     .bundle()
     .on("error", console.error.bind(console)) // eslint-disable-line no-console
     .pipe(source("app.js"))
+    .pipe(gulpif(!debug, streamify(uglify())))
     .pipe(gulp.dest(config.paths.output + "/js"));
 });
 
